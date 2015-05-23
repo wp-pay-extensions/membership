@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_WP_Pay_WPMUDEV_Membership_PaymentData extends Pronamic_WP_Pay_PaymentData {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic_WP_Pay_PaymentData {
 	/**
 	 * Subscription
 	 *

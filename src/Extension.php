@@ -7,7 +7,7 @@
  * @author Leon Rowland <leon@rowland.nl>
  * @since 1.2.6
  */
-class Pronamic_WPMUDEV_Membership_IDeal_AddOn {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	/**
 	 * The slug of this addon
 	 *
@@ -42,7 +42,7 @@ class Pronamic_WPMUDEV_Membership_IDeal_AddOn {
 	 * Plugins loaded
 	 */
 	public static function plugins_loaded() {
-		if ( Pronamic_WPMUDEV_Membership_Membership::is_active() ) {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
 			// Backwards compatibility Membership <= 3.4
 			$class_aliases = array(
 				'M_Gateway'      => 'Membership_Gateway',
@@ -60,19 +60,19 @@ class Pronamic_WPMUDEV_Membership_IDeal_AddOn {
 			// Register the Membership iDEAL gateway
 			// Membership < 3.5
 			if ( function_exists( 'M_register_gateway' ) ) {
-				M_register_gateway( 'pronamic_ideal', 'Pronamic_WPMUDEV_Membership_IDeal_IDealGateway' );
+				M_register_gateway( 'pronamic_ideal', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway' );
 			}
 
 			// Membership >= 3.5
 			if ( method_exists( 'Membership_Gateway', 'register_gateway' ) ) {
-				Membership_Gateway::register_gateway( 'pronamic_ideal', 'Pronamic_WPMUDEV_Membership_IDeal_IDealGateway' );
+				Membership_Gateway::register_gateway( 'pronamic_ideal', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway' );
 			}
 
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 2 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG,   array( __CLASS__, 'source_text' ), 10, 2 );
 
 			if ( is_admin() ) {
-				$admin = new Pronamic_WP_Pay_WPMUDEV_Membership_Admin();
+				$admin = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin();
 			}
 		}
 	}

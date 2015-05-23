@@ -8,7 +8,7 @@
  * @author Leon Rowland <leon@rowland.nl>
  * @version 1.0
  */
-class Pronamic_WPMUDEV_Membership_IDeal_IDealGateway extends Membership_Gateway {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Membership_Gateway {
 	/**
 	 * Gateway name/slug
 	 *
@@ -42,7 +42,7 @@ class Pronamic_WPMUDEV_Membership_IDeal_IDealGateway extends Membership_Gateway 
 			add_action( 'membership_purchase_button', array( $this, 'purchase_button' ), 1, 3 );
 
 			// Status update
-			$slug = Pronamic_WPMUDEV_Membership_IDeal_AddOn::SLUG;
+			$slug = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::SLUG;
 
 			add_action( "pronamic_payment_status_update_$slug", array( $this, 'status_update' ), 10, 2 );
 		}
@@ -80,15 +80,15 @@ class Pronamic_WPMUDEV_Membership_IDeal_IDealGateway extends Membership_Gateway 
 			$subscription_id = filter_input( INPUT_POST, 'subscription_id', FILTER_SANITIZE_STRING );
 			$user_id         = filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_STRING );
 
-			$subscription = Pronamic_WPMUDEV_Membership_Membership::get_subscription( $subscription_id );
-			$membership   = Pronamic_WPMUDEV_Membership_Membership::get_membership( $user_id );
+			$subscription = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_subscription( $subscription_id );
+			$membership   = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
 
 			if ( isset( $subscription, $membership ) ) {
-				$config_id = get_option( Pronamic_WPMUDEV_Membership_IDeal_AddOn::OPTION_CONFIG_ID );
+				$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
 
 				$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 
-				$data = new Pronamic_WP_Pay_WPMUDEV_Membership_PaymentData( $subscription, $membership );
+				$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 				// Start
 				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
@@ -148,14 +148,14 @@ class Pronamic_WPMUDEV_Membership_IDeal_IDealGateway extends Membership_Gateway 
 	 * @param int $user_id WordPress user/member ID
 	 */
 	public function purchase_button( $subscription, $pricing, $user_id ) {
-		if ( Pronamic_WPMUDEV_Membership_Membership::is_pricing_free( $pricing ) ) {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_pricing_free( $pricing ) ) {
 			// @todo what todo?
 		} else {
-			$membership = Pronamic_WPMUDEV_Membership_Membership::get_membership( $user_id );
+			$membership = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
 
-			$config_id = get_option( Pronamic_WPMUDEV_Membership_IDeal_AddOn::OPTION_CONFIG_ID );
+			$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
 
-			$data = new Pronamic_WP_Pay_WPMUDEV_Membership_PaymentData( $subscription, $membership );
+			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 			$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 

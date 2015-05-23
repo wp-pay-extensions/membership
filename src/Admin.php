@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_WP_Pay_WPMUDEV_Membership_Admin {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
 	/**
 	 * Bootstrap
 	 */
@@ -42,14 +42,14 @@ class Pronamic_WP_Pay_WPMUDEV_Membership_Admin {
 		);
 
 		add_settings_field(
-			Pronamic_WPMUDEV_Membership_IDeal_AddOn::OPTION_CONFIG_ID, // id
+			Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, // id
 			__( 'Configuration', 'pronamic_ideal' ), // title
 			array(  'Pronamic_WP_Pay_Admin', 'dropdown_configs' ), // callback
 			'pronamic_pay_membership', // page
 			'pronamic_pay_membership_general', // section
 			array( // args
-				'name'      => Pronamic_WPMUDEV_Membership_IDeal_AddOn::OPTION_CONFIG_ID,
-				'label_for' => Pronamic_WPMUDEV_Membership_IDeal_AddOn::OPTION_CONFIG_ID,
+				'name'      => Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID,
+				'label_for' => Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID,
 			)
 		);
 

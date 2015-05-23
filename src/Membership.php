@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_WPMUDEV_Membership_Membership {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 	/**
 	 * Check if Membership is active (Automattic/developer style)
 	 *
