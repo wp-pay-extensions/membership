@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Title: Membership iDEAL gateway
- * Copyright: Pronamic (c) 2005 - 2013
+ * Title: WordPress pay WPMU DEV Membership iDEAL gateway
+ * Description:
+ * Copyright: Copyright (c) 2005 - 2015
  * Company: Pronamic
- * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.freesubscriptions.php
- * @author Leon Rowland <leon@rowland.nl>
- * @version 1.0
+ * @author Remco Tolsma
+ * @version 1.0.0
+ * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Membership_Gateway {
 	/**
