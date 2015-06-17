@@ -6,7 +6,7 @@
  * Copyright: Copyright (c) 2005 - 2015
  * Company: Pronamic
  * @author Remco Tolsma
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
@@ -38,14 +38,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
 		add_settings_section(
 			'pronamic_pay_membership_general', // id
 			__( 'General', 'pronamic_ideal' ), // title
-			array( 'Pronamic_WP_Pay_Admin', 'settings_section' ), // callback
+			'__return_false', // callback
 			'pronamic_pay_membership' // page
 		);
 
 		add_settings_field(
 			Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, // id
 			__( 'Configuration', 'pronamic_ideal' ), // title
-			array(  'Pronamic_WP_Pay_Admin', 'dropdown_configs' ), // callback
+			array( 'Pronamic_WP_Pay_Admin', 'dropdown_configs' ), // callback
 			'pronamic_pay_membership', // page
 			'pronamic_pay_membership_general', // section
 			array( // args

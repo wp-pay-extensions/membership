@@ -151,6 +151,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	public function purchase_button( $subscription, $pricing, $user_id ) {
 		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_pricing_free( $pricing ) ) {
 			// @todo what todo?
+			return;
 		} else {
 			$membership = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
 

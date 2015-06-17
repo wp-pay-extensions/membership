@@ -7,9 +7,14 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 - 
 
+## [1.0.1] - 2015-06-17
+### Fixed
+- Fixed WordPress callback for the admin settings section.
+
 ## 1.0.0 - 2015-05-26
 
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.0...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/wp-pay-extensions/membership/compare/1.0.1...1.0.0
