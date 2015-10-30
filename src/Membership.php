@@ -20,7 +20,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 	 * @return boolean
 	 */
 	public static function is_active() {
-		return class_exists( 'M_Membership' );
+		return class_exists( 'M_Membership' ) || class_exists( 'MS_Plugin' );
 	}
 
 	/**

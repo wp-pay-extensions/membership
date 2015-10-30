@@ -10,6 +10,17 @@
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Membership_Gateway {
+
+	const ID = 'pronamic_ideal';
+
+	/**
+	 * Gateway singleton instance.
+	 *
+	 * @since 1.0.0
+	 * @var string $instance
+	 */
+	public static $instance;
+
 	/**
 	 * Gateway name/slug
 	 *
@@ -26,6 +37,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 */
 	public $title = 'iDEAL';
 
+	/**
+	 * Configuration ID
+	 *
+	 * @var bool $config_id
+	 */
+	protected $config_id;
+
 	//////////////////////////////////////////////////
 
 	/**
@@ -36,7 +54,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 
 		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.freesubscriptions.php#L30
 		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L97
-		if ( $this->is_active() ) {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
 			add_action( 'init', array( $this, 'maybe_pay' ) );
 
 			// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
@@ -46,7 +64,27 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 			$slug = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::SLUG;
 
 			add_action( "pronamic_payment_status_update_$slug", array( $this, 'status_update' ), 10, 2 );
+
+			add_action( 'ms_gateway_changed_'.self::ID, array( $this, 'update_settings' ) );
 		}
+	}
+
+	//////////////////////////////////////////////////
+
+	/**
+	 * Hook to add custom transaction status.
+	 * This is called by the MS_Factory
+	 *
+	 * @since 1.0.0
+	 */
+	public function after_load() {
+		parent::after_load();
+
+		$this->id = self::ID;
+		$this->name = __( 'iDEAL', 'pronamic_ideal' );
+		$this->group = 'Pronamic iDEAL';
+		$this->manual_payment = true;
+		$this->pro_rate = true;
 	}
 
 	//////////////////////////////////////////////////
@@ -214,7 +252,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 
 				echo '</div>';
 
-				if ( is_wp_error( $this->error ) ) {
+				if ( isset( $this->error ) && is_wp_error( $this->error ) ) {
 					foreach ( $this->error->get_error_messages() as $message ) {
 						echo $message, '<br />';
 					}
@@ -282,5 +320,37 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	public function update() {
 		// Default action is to return true
 		return true;
+	}
+
+	/**
+	 * Update gateway configuration
+	 */
+	function update_settings( $gateway ) {
+		$update = array( 'config_id' );
+
+		foreach ( $update as $field ) {
+			update_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, $this->$field);
+		}
+	}
+
+	/**
+	 * Verify required fields.
+	 *
+	 * @return boolean
+	 */
+	public function is_configured() {
+		$is_configured = true;
+		$required = array( 'config_id' );
+
+		foreach ( $required as $field ) {
+			$value = $this->$field;
+
+			if ( empty( $value ) ) {
+				$is_configured = false;
+				break;
+			}
+		}
+
+		return $is_configured;
 	}
 }

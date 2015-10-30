@@ -38,11 +38,27 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	 *      Membership Premium v3.5.1.2 = Membership_Model_Member
 	 *      @ee https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Member.php#L21
 	 */
-	public function __construct( Membership_Model_Subscription $subscription, Membership_Model_Member $membership ) {
+	public function __construct( $subscription, $membership ) {
 		parent::__construct();
 
-		$this->subscription = $subscription;
-		$this->membership = $membership;
+		if ( ! is_object( $subscription ) || ! is_object( $membership ) ) {
+			trigger_error( 'Subscription or membership is not an object.', E_USER_ERROR );
+		}
+
+		switch( get_class( $subscription ) ) {
+			case 'M_Subscription':
+			case 'Membership_Model_Subscription':
+				$this->subscription = $subscription;
+				$this->membership = $membership;
+				break;
+
+			case 'MS_Model_Relationship':
+			default:
+				global $current_user;
+
+				$this->membership = $subscription->get_membership();
+				$this->subscription = $subscription->get_subscription( $current_user->ID, $this->membership->id);
+		}
 	}
 
 	//////////////////////////////////////////////////
@@ -56,6 +72,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	 * @return string
 	 */
 	public function get_subscription_id() {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+			return $this->subscription->id;
+		}
+
 		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
 		return $this->subscription->sub_id();
 	}
@@ -72,18 +92,32 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_description() {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+			return $this->subscription->name;
+		}
+
 		return $this->subscription->sub_name();
 	}
 
 	public function get_items() {
-		$pricing_array = $this->subscription->get_pricingarray();
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+			$invoice = $this->subscription->get_current_invoice();
 
-		// Coupon
-		if ( function_exists( 'membership_get_current_coupon' ) ) {
-			$coupon = membership_get_current_coupon();
+			$pricing_array = array(
+				array(
+					'amount' => $invoice->total
+				)
+			);
+		} else {
+			$pricing_array = $this->subscription->get_pricingarray();
 
-			if ( ! empty( $pricing_array ) && ! empty( $coupon ) ) {
-				$pricing_array = $coupon->apply_coupon_pricing( $pricing_array );
+			// Coupon
+			if ( function_exists( 'membership_get_current_coupon' ) ) {
+				$coupon = membership_get_current_coupon();
+
+				if ( ! empty( $pricing_array ) && ! empty( $coupon ) ) {
+					$pricing_array = $coupon->apply_coupon_pricing( $pricing_array );
+				}
 			}
 		}
 
@@ -141,14 +175,29 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	//////////////////
 
 	public function get_normal_return_url() {
+		if( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+			return MS_Model_Pages::MS_PAGE_REGISTER;
+		}
+
 		return M_get_returnurl_permalink();
 	}
 
 	public function get_cancel_url() {
-
+		if( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+			return MS_Model_Pages::MS_PAGE_REGISTER;
+		}
 	}
 
 	public function get_success_url() {
+		if( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+			return esc_url_raw(
+				add_query_arg(
+					array( 'ms_relationship_id' => $this->subscription->id ),
+					MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REG_COMPLETE, false )
+				)
+			);
+		}
+
 		return M_get_registrationcompleted_permalink();
 	}
 
