@@ -2,6 +2,12 @@
 
 **Membership driver for the WordPress payment processing library.**
 
+[![Latest Stable Version](https://poser.pugx.org/wp-pay-extensions/membership/v/stable)](https://packagist.org/packages/wp-pay-extensions/membership)
+[![Total Downloads](https://poser.pugx.org/wp-pay-extensions/membership/downloads)](https://packagist.org/packages/wp-pay-extensions/membership)
+[![Latest Unstable Version](https://poser.pugx.org/wp-pay-extensions/membership/v/unstable)](https://packagist.org/packages/wp-pay-extensions/membership)
+[![License](https://poser.pugx.org/wp-pay-extensions/membership/license)](https://packagist.org/packages/wp-pay-extensions/membership)
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 ## Links
 
 *	[Membership Pro](https://premium.wpmudev.org/project/membership/)
