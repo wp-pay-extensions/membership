@@ -329,7 +329,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 		$update = array( 'config_id' );
 
 		foreach ( $update as $field ) {
-			update_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, $this->$field);
+			update_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, $this->$field );
 		}
 	}
 

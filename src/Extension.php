@@ -76,7 +76,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 
 			// Membership2
 			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-				add_filter( 'ms_model_gateway_register', array ( __CLASS__, 'register_gateway' ) );
+				add_filter( 'ms_model_gateway_register', array( __CLASS__, 'register_gateway' ) );
 			}
 
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 2 );
@@ -91,7 +91,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	//////////////////////////////////////////////////
 
 	public static function is_membership2() {
-		return class_exists( 'MS_Gateway' ) && ( ! function_exists( 'membership2_use_old') || ! membership2_use_old() );
+		return class_exists( 'MS_Gateway' ) && ( ! function_exists( 'membership2_use_old' ) || ! membership2_use_old() );
 	}
 
 	//////////////////////////////////////////////////
@@ -124,7 +124,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 
 			$membership = $subscription->get_membership();
 
-			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership);
+			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 			$gateway = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway();
 

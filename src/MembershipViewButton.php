@@ -50,10 +50,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway_View_Button ext
 				echo $gateway->get_input_html();
 
 				// Data
-				$fields = array (
+				$fields = array(
 					'subscription_id' => $data->get_subscription_id(),
-					'user_id' => $current_user->ID,
-					'invoice_id' => $invoice->id,
+					'user_id'         => $current_user->ID,
+					'invoice_id'      => $invoice->id,
 				);
 
 				echo Pronamic_IDeal_IDeal::htmlHiddenFields( $fields );

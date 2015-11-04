@@ -45,19 +45,19 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 			trigger_error( 'Subscription or membership is not an object.', E_USER_ERROR );
 		}
 
-		switch( get_class( $subscription ) ) {
-			case 'M_Subscription':
-			case 'Membership_Model_Subscription':
+		switch ( get_class( $subscription ) ) {
+			case 'M_Subscription' :
+			case 'Membership_Model_Subscription' :
 				$this->subscription = $subscription;
-				$this->membership = $membership;
-				break;
+				$this->membership   = $membership;
 
-			case 'MS_Model_Relationship':
-			default:
+				break;
+			case 'MS_Model_Relationship' :
+			default :
 				global $current_user;
 
-				$this->membership = $subscription->get_membership();
-				$this->subscription = $subscription->get_subscription( $current_user->ID, $this->membership->id);
+				$this->membership   = $subscription->get_membership();
+				$this->subscription = $subscription->get_subscription( $current_user->ID, $this->membership->id );
 		}
 	}
 
@@ -105,8 +105,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 
 			$pricing_array = array(
 				array(
-					'amount' => $invoice->total
-				)
+					'amount' => $invoice->total,
+				),
 			);
 		} else {
 			$pricing_array = $this->subscription->get_pricingarray();
@@ -175,7 +175,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	//////////////////
 
 	public function get_normal_return_url() {
-		if( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
 			return MS_Model_Pages::MS_PAGE_REGISTER;
 		}
 
@@ -183,13 +183,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_cancel_url() {
-		if( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
 			return MS_Model_Pages::MS_PAGE_REGISTER;
 		}
 	}
 
 	public function get_success_url() {
-		if( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
 			return esc_url_raw(
 				add_query_arg(
 					array( 'ms_relationship_id' => $this->subscription->id ),
