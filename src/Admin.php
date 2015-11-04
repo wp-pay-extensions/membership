@@ -81,6 +81,6 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
 	 * @return boolean
 	 */
 	public function page_settings() {
-		return Pronamic_WP_Pay_Admin::render_view( 'membership/settings' );
+		include dirname( __FILE__ ) . '/../views/html-admin-page-settings.php';
 	}
 }
