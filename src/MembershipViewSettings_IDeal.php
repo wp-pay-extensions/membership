@@ -1,6 +1,6 @@
 <?php
 
-class MS_Gateway_Pronamic_View_Settings extends MS_View {
+class MS_Gateway_Pronamic_ideal_View_Settings extends MS_View {
 	public function to_html() {
 		$fields = $this->prepare_fields();
 
@@ -43,30 +43,6 @@ class MS_Gateway_Pronamic_View_Settings extends MS_View {
 				'value'         => $gateway->config_id,
 				'class'         => 'ms-text-large',
 				'ajax_data'     => array( 1 ),
-			),
-			'button_image_url' => array(
-				'id'        => 'button_image_url',
-				'type'      => MS_Helper_Html::INPUT_TYPE_TEXT,
-				'title'     => __( 'Button image URL', 'pronamic-ideal' ),
-				'value'     => $gateway->button_image_url,
-				'class'     => 'ms-text-large',
-				'ajax_data' => array( 1 ),
-			),
-			'button_image_url_default' => array(
-				'id' => 'button_image_url_default',
-				'type' => MS_Helper_Html::TYPE_HTML_TEXT,
-				'value' => '<span class="ms-settings-description ms-description">' . sprintf(
-					__( 'Default: <code>%s</code>', 'pronamic-ideal' ),
-					plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file )
-				) . '</span>',
-			),
-			'button_description' => array(
-				'id'        => 'button_description',
-				'type'      => MS_Helper_Html::INPUT_TYPE_TEXT,
-				'title'     => __( 'Button description', 'pronamic-ideal' ),
-				'value'     => $gateway->button_description,
-				'class'     => 'ms-text-large',
-				'ajax_data' => array( 1 ),
 			),
 		);
 

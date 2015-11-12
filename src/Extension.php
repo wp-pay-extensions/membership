@@ -100,6 +100,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	 * Register gateway
 	 */
 	public static function register_gateway( $gateways ) {
+		$gateways['pronamic']       = 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway';
 		$gateways['pronamic_ideal'] = 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway';
 
 		return $gateways;

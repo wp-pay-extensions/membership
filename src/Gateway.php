@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Title: WordPress pay WPMU DEV Membership iDEAL gateway
+ * Title: WordPress pay WPMU DEV Membership gateway
  * Description:
  * Copyright: Copyright (c) 2005 - 2015
  * Company: Pronamic
  * @author Remco Tolsma
- * @version 1.0.0
- * @since 1.0.0
+ * @version 1.0.2
+ * @since 1.0.2
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Membership_Gateway {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_Gateway {
 
-	const ID = 'pronamic_ideal';
+	const ID = 'pronamic';
 
 	/**
 	 * Gateway singleton instance.
@@ -27,7 +27,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L10
 	 * @var string
 	 */
-	public $gateway = 'pronamic_ideal';
+	public $gateway = 'pronamic';
 
 	/**
 	 * Gateway title
@@ -35,7 +35,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L11
 	 * @var string
 	 */
-	public $title = 'iDEAL';
+	public $title = 'Pronamic';
 
 	/**
 	 * Configuration ID
@@ -43,6 +43,20 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 * @var bool $config_id
 	 */
 	protected $config_id;
+
+	/**
+	 * Button image URL
+	 *
+	 * @var bool $button_image_url
+	 */
+	protected $button_image_url;
+
+	/**
+	 * Button description
+	 *
+	 * @var bool $button_description
+	 */
+	protected $button_description;
 
 	//////////////////////////////////////////////////
 
@@ -81,7 +95,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 		parent::after_load();
 
 		$this->id = self::ID;
-		$this->name = __( 'iDEAL', 'pronamic_ideal' );
+		$this->name = 'Pronamic';
 		$this->group = 'Pronamic';
 		$this->manual_payment = true;
 		$this->pro_rate = true;
@@ -130,7 +144,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 				$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 				// Start
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data, Pronamic_WP_Pay_PaymentMethods::IDEAL );
+				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
 
 				// Meta
 				update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
@@ -198,8 +212,6 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 			$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
-
-			$gateway->set_payment_method( Pronamic_WP_Pay_PaymentMethods::IDEAL );
 
 			if ( $gateway ) {
 				global $M_options;
@@ -328,10 +340,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 * Update gateway configuration
 	 */
 	function update_settings( $gateway ) {
-		$update = array( 'config_id' );
+		$update = array(
+			Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID => 'config_id'
+		);
 
-		foreach ( $update as $field ) {
-			update_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, $this->$field );
+		foreach ( $update as $option => $field ) {
+			update_option( $option, $this->$field );
 		}
 	}
 
@@ -341,18 +355,16 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 * @return boolean
 	 */
 	public function is_configured() {
-		$is_configured = true;
 		$required = array( 'config_id' );
 
 		foreach ( $required as $field ) {
 			$value = $this->$field;
 
 			if ( empty( $value ) ) {
-				$is_configured = false;
-				break;
+				return false;
 			}
 		}
 
-		return $is_configured;
+		return true;
 	}
 }

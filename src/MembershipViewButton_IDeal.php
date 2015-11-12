@@ -1,6 +1,7 @@
 <?php
 
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends MS_View {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway_View_Button extends MS_View {
+
 	public function to_html() {
 		global $current_user;
 
@@ -12,7 +13,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends 
 
 		$ms_gateway = $this->data['gateway'];
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $ms_gateway->config_id );
+		$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
+
+		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+
+		// Don't set payment method to iDEAL as the issuer id is unknown when Pronamic_WP_Pay_Plugin::start() creates
+		// the payment. Therefore, any chosen banks won't get used for the payment.
+		// $gateway->set_payment_method( Pronamic_WP_Pay_PaymentMethods::IDEAL );
 
 		$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
@@ -22,7 +29,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends 
 
 			ob_start();
 
-			$payment = Pronamic_WP_Pay_Plugin::start( $ms_gateway->config_id, $gateway, $data );
+			$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data, Pronamic_WP_Pay_PaymentMethods::IDEAL );
 
 			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
 
@@ -36,24 +43,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends 
 					$payment->get_action_url()
 				);
 
-				// Button image URL
-				$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file );
-
-				if ( ! empty( trim( $ms_gateway->button_image_url ) ) ) {
-					$button_image_url = $ms_gateway->button_image_url;
-				}
-
-				// Button description
-				$button_description = __( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' );
-
-				if ( ! empty( trim( $ms_gateway->button_description ) ) ) {
-					$button_description = $ms_gateway->button_description;
-				}
-
 				printf(
 					'<img src="%s" alt="%s" />',
-					esc_attr( $button_image_url ),
-					esc_attr( $button_description )
+					esc_attr( plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file ) ),
+					esc_attr__( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' )
 				);
 
 				echo '<div style="margin-top: 1em;">';
