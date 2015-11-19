@@ -51,9 +51,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
 			// Backwards compatibility Membership <= 3.4
 			$class_aliases = array(
-				'M_Gateway'      => 'Membership_Gateway',
-				'M_Subscription' => 'Membership_Model_Subscription',
-				'M_Membership'   => 'Membership_Model_Member',
+				'M_Gateway'                                                       => 'Membership_Gateway',
+				'M_Subscription'                                                  => 'Membership_Model_Subscription',
+				'M_Membership'                                                    => 'Membership_Model_Member',
+				'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings'      => 'MS_Gateway_Pronamic_View_Settings',
+				'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewSettings' => 'MS_Gateway_Pronamic_ideal_View_Settings',
+				'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton'        => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button',
+				'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewButton'   => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway_View_Button',
 			);
 
 			foreach ( $class_aliases as $orignal => $alias ) {

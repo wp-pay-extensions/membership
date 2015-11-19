@@ -1,6 +1,16 @@
 <?php
 
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends MS_View {
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
+	/**
+	 * Payment method.
+	 *
+	 * @since 1.1.0
+	 * @var string $payment_method
+	 */
+	protected $payment_method = null;
+
+	//////////////////////////////////////////////////
+
 	public function to_html() {
 		global $current_user;
 
@@ -14,6 +24,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends 
 
 		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $ms_gateway->config_id );
 
+		// Don't set payment method here as the issuer id is unknown when Pronamic_WP_Pay_Plugin::start() creates
+		// the payment. Therefore, any chosen banks won't get used for the payment.
+		// $gateway->set_payment_method( $this->payment_method );
+
 		$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 		$html = '';
@@ -22,7 +36,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends 
 
 			ob_start();
 
-			$payment = Pronamic_WP_Pay_Plugin::start( $ms_gateway->config_id, $gateway, $data );
+			$payment = Pronamic_WP_Pay_Plugin::start( $ms_gateway->config_id, $gateway, $data, $this->payment_method );
 
 			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
 
@@ -39,14 +53,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button extends 
 				// Button image URL
 				$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file );
 
-				if ( ! empty( trim( $ms_gateway->button_image_url ) ) ) {
+				if ( isset( $ms_gateway->button_image_url ) && ! empty( trim( $ms_gateway->button_image_url ) ) ) {
 					$button_image_url = $ms_gateway->button_image_url;
 				}
 
 				// Button description
 				$button_description = __( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' );
 
-				if ( ! empty( trim( $ms_gateway->button_description ) ) ) {
+				if ( isset( $ms_gateway->button_description) && ! empty( trim( $ms_gateway->button_description ) ) ) {
 					$button_description = $ms_gateway->button_description;
 				}
 
