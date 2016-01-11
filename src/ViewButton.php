@@ -26,7 +26,6 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 
 		// Don't set payment method here as the issuer id is unknown when Pronamic_WP_Pay_Plugin::start() creates
 		// the payment. Therefore, any chosen banks won't get used for the payment.
-		// $gateway->set_payment_method( $this->payment_method );
 
 		$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
@@ -60,7 +59,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 				// Button description
 				$button_description = __( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' );
 
-				if ( isset( $ms_gateway->button_description) && ! empty( trim( $ms_gateway->button_description ) ) ) {
+				if ( isset( $ms_gateway->button_description ) && ! empty( trim( $ms_gateway->button_description ) ) ) {
 					$button_description = $ms_gateway->button_description;
 				}
 

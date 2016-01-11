@@ -94,17 +94,17 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 *
 	 * @see https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 	 */
-	public function pronamic_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_ID, $status, $note ) {
+	public function pronamic_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note ) {
 		// Membership <= 3.4
 		// @see https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 		if ( method_exists( $this, 'record_transaction' ) ) {
-			$this->record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_ID, $status, $note );
+			$this->record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
 
 		// Membership >= 3.5
 		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Gateway.php#L256
 		if ( method_exists( $this, '_record_transaction' ) ) {
-			$this->_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_ID, $status, $note );
+			$this->_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
 	}
 
@@ -202,10 +202,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 			$gateway->set_payment_method( Pronamic_WP_Pay_PaymentMethods::IDEAL );
 
 			if ( $gateway ) {
-				global $M_options;
-
 				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
-				if ( isset( $M_options['formtype'] ) && 'new' === strtolower( $M_options['formtype'] ) ) {
+				if ( 'new' === strtolower( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_option( 'formtype' ) ) ) {
 					$action = add_query_arg( array(
 						'action'       => 'buynow',
 						'subscription' => $data->get_subscription_id(),

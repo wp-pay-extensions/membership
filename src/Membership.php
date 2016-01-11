@@ -68,7 +68,6 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 		return $subscription;
 	}
 
-
 	/**
 	 * Get an membership by an user ID
 	 *
@@ -89,5 +88,26 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 		}
 
 		return $membership;
+	}
+
+	/**
+	 * Get option.
+	 *
+	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
+	 * @return string
+	 */
+	public static function get_option( $name ) {
+		// @codingStandardsIgnoreStart
+		global $M_options;
+
+		$options = $M_options;
+		// @codingStandardsIgnoreEnd
+
+		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
+		if ( isset( $options[ $name ] ) ) {
+			return $options[ $name ];
+		}
+
+		return false;
 	}
 }

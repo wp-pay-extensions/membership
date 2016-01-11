@@ -139,13 +139,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	//////////////////////////////////////////////////
 
 	public function get_currency_alphabetic_code() {
-		global $M_options;
+		$currency = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_option( 'paymentcurrency' );
 
-		if ( empty( $M_options['paymentcurrency'] ) ) {
-			$M_options['paymentcurrency'] = 'EUR';
+		if ( empty( $currency ) ) {
+			$currency = 'EUR';
 		}
 
-		return $M_options['paymentcurrency'];
+		return $currency;
 	}
 
 	//////////////////////////////////////////////////
