@@ -3,8 +3,9 @@
 /**
  * Title: WordPress pay WPMU DEV Membership admin
  * Description:
- * Copyright: Copyright (c) 2005 - 2015
+ * Copyright: Copyright (c) 2005 - 2016
  * Company: Pronamic
+ *
  * @author Remco Tolsma
  * @version 1.0.1
  * @since 1.0.0
@@ -81,6 +82,6 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
 	 * @return boolean
 	 */
 	public function page_settings() {
-		return Pronamic_WP_Pay_Admin::render_view( 'membership/settings' );
+		include dirname( __FILE__ ) . '/../views/html-admin-page-settings.php';
 	}
 }
