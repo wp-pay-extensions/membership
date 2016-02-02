@@ -52,14 +52,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 				// Button image URL
 				$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file );
 
-				if ( isset( $ms_gateway->button_image_url ) && ! empty( trim( $ms_gateway->button_image_url ) ) ) {
+				if ( isset( $ms_gateway->button_image_url ) && ! empty( $ms_gateway->button_image_url ) ) {
 					$button_image_url = $ms_gateway->button_image_url;
 				}
 
 				// Button description
 				$button_description = __( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' );
 
-				if ( isset( $ms_gateway->button_description ) && ! empty( trim( $ms_gateway->button_description ) ) ) {
+				if ( isset( $ms_gateway->button_description ) && ! empty( $ms_gateway->button_description ) ) {
 					$button_description = $ms_gateway->button_description;
 				}
 
