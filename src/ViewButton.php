@@ -90,8 +90,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 
 				echo '</div>';
 
-				if ( is_wp_error( $this->error ) ) {
-					foreach ( $this->error->get_error_messages() as $message ) {
+				$error = $gateway->get_error();
+
+				if ( is_wp_error( $error ) ) {
+					foreach ( $error->get_error_messages() as $message ) {
 						echo $message, '<br />';
 					}
 				}
