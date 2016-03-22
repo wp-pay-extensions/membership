@@ -45,6 +45,20 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 	 */
 	protected $config_id;
 
+	/**
+	 * Button image URL
+	 *
+	 * @var bool $button_image_url
+	 */
+	protected $button_image_url;
+
+	/**
+	 * Button description
+	 *
+	 * @var bool $button_description
+	 */
+	protected $button_description;
+
 	//////////////////////////////////////////////////
 
 	/**
