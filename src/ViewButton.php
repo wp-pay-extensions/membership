@@ -35,73 +35,63 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 
 			ob_start();
 
-			$payment = Pronamic_WP_Pay_Plugin::start( $ms_gateway->config_id, $gateway, $data, $this->payment_method );
+			$gateway->set_payment_method( $this->payment_method );
 
-			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
+			echo '<form id="pronamic-pay-form" method="post">';
 
-			if ( $gateway->is_html_form() ) {
-				echo $gateway->get_form_html( $payment, $auto_submit = false );
+			// Button image URL
+			$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file );
+
+			if ( isset( $ms_gateway->button_image_url ) && '' !== $ms_gateway->button_image_url ) {
+				$button_image_url = $ms_gateway->button_image_url;
 			}
 
-			if ( $gateway->is_http_redirect() ) {
-				printf(
-					'<form id="pronamic-pay-form" method="post" action="%s">',
-					$payment->get_action_url()
-				);
+			// Button description
+			$button_description = __( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' );
 
-				// Button image URL
-				$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file );
+			if ( isset( $ms_gateway->button_description ) && '' !== $ms_gateway->button_description ) {
+				$button_description = $ms_gateway->button_description;
+			}
 
-				if ( isset( $ms_gateway->button_image_url ) && ! empty( $ms_gateway->button_image_url ) ) {
-					$button_image_url = $ms_gateway->button_image_url;
+			printf(
+				'<img src="%s" alt="%s" />',
+				esc_attr( $button_image_url ),
+				esc_attr( $button_description )
+			);
+
+			echo '<div style="margin-top: 1em;">';
+
+			echo $gateway->get_input_html();
+
+			// Data
+			$fields = array(
+				'subscription_id' => $data->get_subscription_id(),
+				'user_id'         => $current_user->ID,
+				'invoice_id'      => $invoice->id,
+			);
+
+			echo Pronamic_IDeal_IDeal::htmlHiddenFields( $fields );
+
+			// Submit button
+			printf(
+				' <input type="submit" name="pronamic_pay_membership_%s" value="%s" />',
+				esc_attr( $ms_gateway->gateway ),
+				esc_attr__( 'Pay', 'pronamic_ideal' )
+			);
+
+			echo '</div>';
+
+			$error = $gateway->get_error();
+
+			if ( is_wp_error( $error ) ) {
+				foreach ( $error->get_error_messages() as $message ) {
+					echo $message, '<br />';
 				}
+			}
 
-				// Button description
-				$button_description = __( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' );
-
-				if ( isset( $ms_gateway->button_description ) && ! empty( $ms_gateway->button_description ) ) {
-					$button_description = $ms_gateway->button_description;
-				}
-
-				printf(
-					'<img src="%s" alt="%s" />',
-					esc_attr( $button_image_url ),
-					esc_attr( $button_description )
-				);
-
-				echo '<div style="margin-top: 1em;">';
-
-				echo $gateway->get_input_html();
-
-				// Data
-				$fields = array(
-					'subscription_id' => $data->get_subscription_id(),
-					'user_id'         => $current_user->ID,
-					'invoice_id'      => $invoice->id,
-				);
-
-				echo Pronamic_IDeal_IDeal::htmlHiddenFields( $fields );
-
-				// Submit button
-				printf(
-					' <input type="submit" name="pronamic_pay_membership" value="%s" />',
-					esc_attr__( 'Pay', 'pronamic_ideal' )
-				);
-
-				echo '</div>';
-
-				$error = $gateway->get_error();
-
-				if ( is_wp_error( $error ) ) {
-					foreach ( $error->get_error_messages() as $message ) {
-						echo $message, '<br />';
-					}
-				}
-
-				?>
-				</form>
+			?>
+			</form>
 			<?php
-			}
 
 			$payment_form = apply_filters(
 				'ms_gateway_form',
