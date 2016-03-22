@@ -86,6 +86,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Members
 		$this->group = 'Pronamic';
 		$this->manual_payment = true;
 		$this->pro_rate = true;
+		$this->mode = 'live';
 	}
 
 	//////////////////////////////////////////////////
