@@ -129,25 +129,34 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	public static function redirect_url( $url, $payment ) {
 		// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
 		if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+
 			// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
 			$url = MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER );
+
 		} elseif ( function_exists( 'M_get_returnurl_permalink' ) ) {
+
+			// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L598-L622
 			$url = M_get_returnurl_permalink();
+
 		}
 
 		switch ( $payment->get_status() ) {
 			case Pronamic_WP_Pay_Statuses::SUCCESS :
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
 				if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+
 					// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
-					$url = esc_url_raw(
-						add_query_arg(
-							array( 'ms_relationship_id' => $this->subscription->id ),
-							MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REG_COMPLETE, false )
-						)
+					$url = add_query_arg(
+						'ms_relationship_id',
+						$this->subscription->id,
+						MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REG_COMPLETE )
 					);
+
 				} elseif ( function_exists( 'M_get_registrationcompleted_permalink' ) ) {
+
+					// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L576-L598
 					$url = M_get_registrationcompleted_permalink();
+
 				}
 
 				break;
