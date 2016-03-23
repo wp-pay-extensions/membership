@@ -142,6 +142,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 
 		switch ( $payment->get_status() ) {
 			case Pronamic_WP_Pay_Statuses::SUCCESS :
+
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
 				if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 
