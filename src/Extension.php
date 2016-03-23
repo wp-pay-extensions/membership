@@ -52,9 +52,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
 			// Backwards compatibility Membership <= 3.4
 			$class_aliases = array(
-				'M_Gateway'                                                       => 'Membership_Gateway',
-				'M_Subscription'                                                  => 'Membership_Model_Subscription',
-				'M_Membership'                                                    => 'Membership_Model_Member',
+				'M_Gateway'      => 'Membership_Gateway',
+				'M_Subscription' => 'Membership_Model_Subscription',
+				'M_Membership'   => 'Membership_Model_Member',
 			);
 
 			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
