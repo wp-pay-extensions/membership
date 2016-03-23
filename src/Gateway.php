@@ -7,11 +7,15 @@
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.2
+ * @version 1.0.4
  * @since 1.0.2
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_Gateway {
-
+	/**
+	 * Unique identier for this gateway.
+	 *
+	 * @var string
+	 */
 	const ID = 'pronamic';
 
 	/**
@@ -80,7 +84,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 
 			add_action( "pronamic_payment_status_update_$slug", array( $this, 'status_update' ), 10, 2 );
 
-			add_action( 'ms_gateway_changed_'.self::ID, array( $this, 'update_settings' ) );
+			add_action( 'ms_gateway_changed_' . self::ID, array( $this, 'update_settings' ) );
 		}
 	}
 
@@ -95,11 +99,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	public function after_load() {
 		parent::after_load();
 
-		$this->id = self::ID;
-		$this->name = 'Pronamic';
-		$this->group = 'Pronamic';
+		$this->id             = self::ID;
+		$this->name           = 'Pronamic';
+		$this->group          = 'Pronamic';
 		$this->manual_payment = true;
-		$this->pro_rate = true;
+		$this->pro_rate       = true;
+		$this->mode           = 'live';
 	}
 
 	//////////////////////////////////////////////////
@@ -129,17 +134,28 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	 * Maybe pay
 	 */
 	public function maybe_pay() {
-		if ( filter_has_var( INPUT_POST, 'pronamic_pay_membership' ) ) {
+		$pay_membership = sprintf( 'pronamic_pay_membership_%s', $this->gateway );
+
+		if ( filter_has_var( INPUT_POST, $pay_membership ) ) {
 			// Data
 			$subscription_id = filter_input( INPUT_POST, 'subscription_id', FILTER_SANITIZE_STRING );
 			$user_id         = filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_STRING );
 
-			$subscription = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_subscription( $subscription_id );
-			$membership   = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
+			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+				$subscription = MS_Factory::load( 'MS_Model_Relationship', $subscription_id );
+
+				$membership = $subscription->get_membership();
+
+				$config_id = $this->config_id;
+			} else {
+				$subscription = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_subscription( $subscription_id );
+
+				$membership   = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
+
+				$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
+			}
 
 			if ( isset( $subscription, $membership ) ) {
-				$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
-
 				$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 
 				$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
@@ -150,6 +166,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 				// Meta
 				update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
 				update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', $data->get_subscription_id() );
+
+				if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+					$invoice = $subscription->get_current_invoice();
+
+					update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
+				}
 
 				// Membership record transaction
 				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
@@ -259,7 +281,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 
 				// Submit button
 				printf(
-					'<input type="submit" name="pronamic_pay_membership" value="%s" />',
+					'<input type="submit" name="pronamic_pay_membership_%s" value="%s" />',
+					esc_attr( $this->gateway ),
 					esc_attr__( 'Pay', 'pronamic_ideal' )
 				);
 

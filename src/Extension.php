@@ -52,9 +52,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
 			// Backwards compatibility Membership <= 3.4
 			$class_aliases = array(
-				'M_Gateway'                                                       => 'Membership_Gateway',
-				'M_Subscription'                                                  => 'Membership_Model_Subscription',
-				'M_Membership'                                                    => 'Membership_Model_Member',
+				'M_Gateway'      => 'Membership_Gateway',
+				'M_Subscription' => 'Membership_Model_Subscription',
+				'M_Membership'   => 'Membership_Model_Member',
 			);
 
 			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
@@ -91,7 +91,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 				add_filter( 'ms_model_gateway_register', array( __CLASS__, 'register_gateway' ) );
 			}
 
-			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 2 );
+			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
+			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 1 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG,   array( __CLASS__, 'source_text' ), 10, 2 );
 
 			if ( is_admin() ) {
@@ -118,53 +119,75 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		return $gateways;
 	}
 
-	//////////////////////////////////////////////////
+	/**
+	 * Payment redirect URL filter.
+	 *
+	 * @param string                  $url
+	 * @param Pronamic_WP_Pay_Payment $payment
+	 * @return string
+	 */
+	public static function redirect_url( $url, $payment ) {
+		// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
+		if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+
+			// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
+			$url = MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER );
+
+		} elseif ( function_exists( 'M_get_returnurl_permalink' ) ) {
+
+			// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L598-L622
+			$url = M_get_returnurl_permalink();
+
+		}
+
+		switch ( $payment->get_status() ) {
+			case Pronamic_WP_Pay_Statuses::SUCCESS :
+
+				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
+				if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+
+					// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
+					$url = add_query_arg(
+						'ms_relationship_id',
+						$this->subscription->id,
+						MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REG_COMPLETE )
+					);
+
+				} elseif ( function_exists( 'M_get_registrationcompleted_permalink' ) ) {
+
+					// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L576-L598
+					$url = M_get_registrationcompleted_permalink();
+
+				}
+
+				break;
+		}
+
+		return $url;
+	}
+
 
 	/**
 	 * Update lead status of the specified payment
 	 *
 	 * @param Pronamic_Pay_Payment $payment
 	 */
-	public static function status_update( Pronamic_Pay_Payment $payment, $can_redirect = false ) {
-		$status = $payment->get_status();
+	public static function status_update( Pronamic_Pay_Payment $payment ) {
+		switch ( $payment->get_status() ) {
+			case Pronamic_WP_Pay_Statuses::SUCCESS :
+				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/class-ms-factory.php#L116-L184
+				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-invoice.php
+				if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Factory', 'load' ) && class_exists( 'MS_Model_Invoice' ) ) {
+					$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
 
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-			$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
+					$invoice = MS_Factory::load( 'MS_Model_Invoice', $invoice_id );
 
-			$invoice = MS_Factory::load( 'MS_Model_Invoice', $invoice_id );
-
-			$subscription = $invoice->get_subscription();
-
-			$membership = $subscription->get_membership();
-
-			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
-
-			$gateway = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway();
-
-			$url = $data->get_normal_return_url();
-		} elseif ( function_exists( 'M_get_returnurl_permalink' ) ) {
-			$url = M_get_returnurl_permalink();
-		}
-
-		switch ( $status ) {
-			case Pronamic_WP_Pay_Statuses::SUCCESS:
-				if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
 					if ( ! $invoice->is_paid() ) {
 						$invoice->pay_it( $gateway->gateway, $payment->get_id() );
 					}
-
-					$url = $data->get_success_url();
-				} elseif ( function_exists( 'M_get_registrationcompleted_permalink' ) ) {
-					$url = M_get_registrationcompleted_permalink();
 				}
 
 				break;
-		}
-
-		if ( $url && $can_redirect ) {
-			wp_redirect( $url );
-
-			exit;
 		}
 	}
 
