@@ -84,7 +84,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 
 			add_action( "pronamic_payment_status_update_$slug", array( $this, 'status_update' ), 10, 2 );
 
-			add_action( 'ms_gateway_changed_'.self::ID, array( $this, 'update_settings' ) );
+			add_action( 'ms_gateway_changed_' . self::ID, array( $this, 'update_settings' ) );
 		}
 	}
 
