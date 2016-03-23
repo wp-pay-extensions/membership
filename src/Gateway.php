@@ -7,11 +7,15 @@
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.2
+ * @version 1.0.4
  * @since 1.0.2
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_Gateway {
-
+	/**
+	 * Unique identier for this gateway.
+	 *
+	 * @var string
+	 */
 	const ID = 'pronamic';
 
 	/**
@@ -95,12 +99,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	public function after_load() {
 		parent::after_load();
 
-		$this->id = self::ID;
-		$this->name = 'Pronamic';
-		$this->group = 'Pronamic';
+		$this->id             = self::ID;
+		$this->name           = 'Pronamic';
+		$this->group          = 'Pronamic';
 		$this->manual_payment = true;
-		$this->pro_rate = true;
-		$this->mode = 'live';
+		$this->pro_rate       = true;
+		$this->mode           = 'live';
 	}
 
 	//////////////////////////////////////////////////
