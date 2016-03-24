@@ -177,7 +177,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 
 	public function get_normal_return_url() {
 		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-			return MS_Model_Pages::MS_PAGE_REGISTER;
+			return esc_url_raw(
+				add_query_arg(
+					array( 'ms_relationship_id' => $this->subscription->id ),
+					MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER, false )
+				)
+			);
 		}
 
 		return M_get_returnurl_permalink();
@@ -185,7 +190,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 
 	public function get_cancel_url() {
 		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-			return MS_Model_Pages::MS_PAGE_REGISTER;
+			return esc_url_raw(
+				add_query_arg(
+					array( 'ms_relationship_id' => $this->subscription->id ),
+					MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER, false )
+				)
+			);
 		}
 	}
 
