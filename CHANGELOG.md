@@ -7,6 +7,11 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 -
 
+## [1.0.5] - 2016-04-12
+- Update URLs in payment data.
+- Extend iDEAL gateway from Pronamic gateway and only use status_update() in Extension.php
+- No longer use camelCase for payment data.
+
 ## [1.0.4] - 2016-02-23
 - Always use Membership gateway live mode.
 - Display gateway error messages.
@@ -28,7 +33,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.4...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.5...HEAD
+[1.0.5]: https://github.com/wp-pay-extensions/membership/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/wp-pay-extensions/membership/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/wp-pay-extensions/membership/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/wp-pay-extensions/membership/compare/1.0.1...1.0.2
