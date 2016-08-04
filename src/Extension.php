@@ -31,9 +31,11 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	 * @var array
 	 */
 	static $gateways = array(
-		'pronamic'       => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway',
-		'pronamic_ideal' => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway',
+		'pronamic'                   => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway',
+		'pronamic_ideal'             => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway',
+		'pronamic_ideal_directdebit' => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitGateway',
 	);
+
 	//////////////////////////////////////////////////
 
 	/**
@@ -68,10 +70,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 
 			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
 				$m2_class_aliases = array(
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings'      => 'MS_Gateway_Pronamic_View_Settings',
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewSettings' => 'MS_Gateway_Pronamic_ideal_View_Settings',
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton'        => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button',
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewButton'   => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway_View_Button',
+					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings'                 => 'MS_Gateway_Pronamic_View_Settings',
+					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewSettings'            => 'MS_Gateway_Pronamic_ideal_View_Settings',
+					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitViewSettings' => 'MS_Gateway_Pronamic_ideal_directdebit_View_Settings',
+					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton'                   => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button',
+					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewButton'              => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway_View_Button',
+					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitViewButton'   => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitGateway_View_Button',
 				);
 
 				$class_aliases = array_merge( $class_aliases, $m2_class_aliases );
@@ -88,11 +92,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 			// Membership < 3.5
 			if ( function_exists( 'M_register_gateway' ) ) {
 				M_register_gateway( 'pronamic_ideal', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway' );
+				M_register_gateway( 'pronamic_ideal_directdebit', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitGateway' );
 			}
 
 			// Membership >= 3.5
 			if ( method_exists( 'Membership_Gateway', 'register_gateway' ) ) {
 				Membership_Gateway::register_gateway( 'pronamic_ideal', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway' );
+				Membership_Gateway::register_gateway( 'pronamic_ideal_directdebit', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitGateway' );
 			}
 
 			// Membership2

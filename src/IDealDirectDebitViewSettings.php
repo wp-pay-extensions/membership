@@ -1,0 +1,4 @@
+<?php
+
+class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealDirectDebitViewSettings extends Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings {
+}
