@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Title: WordPress pay WPMU DEV Membership view button
+ * Description:
+ * Copyright: Copyright (c) 2005 - 2016
+ * Company: Pronamic
+ *
+ * @author Remco Tolsma
+ * @version 1.0.6
+ * @since 1.0.0
+ */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 	/**
 	 * Payment method.

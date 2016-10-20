@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Title: WordPress pay WPMU DEV Membership view settings
+ * Description:
+ * Copyright: Copyright (c) 2005 - 2016
+ * Company: Pronamic
+ *
+ * @author Remco Tolsma
+ * @version 1.0.6
+ * @since 1.0.0
+ */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View {
 	/**
 	 * Gateway instance.
@@ -63,7 +73,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 			'button_image_url' => array(
 				'id'        => 'button_image_url',
 				'type'      => MS_Helper_Html::INPUT_TYPE_TEXT,
-				'title'     => __( 'Button image URL', 'pronamic-ideal' ),
+				'title'     => __( 'Button image URL', 'pronamic_ideal' ),
 				'value'     => $this->gateway->button_image_url,
 				'class'     => 'ms-text-large',
 				'ajax_data' => array( 1 ),
@@ -72,14 +82,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 				'id' => 'button_image_url_default',
 				'type' => MS_Helper_Html::TYPE_HTML_TEXT,
 				'value' => '<span class="ms-settings-description ms-description">' . sprintf(
-					__( 'Default: <code>%s</code>', 'pronamic-ideal' ),
+					__( 'Default: <code>%s</code>', 'pronamic_ideal' ),
 					plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file )
 				) . '</span>',
 			),
 			'button_description' => array(
 				'id'        => 'button_description',
 				'type'      => MS_Helper_Html::INPUT_TYPE_TEXT,
-				'title'     => __( 'Button description', 'pronamic-ideal' ),
+				'title'     => __( 'Button description', 'pronamic_ideal' ),
 				'value'     => $this->gateway->button_description,
 				'class'     => 'ms-text-large',
 				'ajax_data' => array( 1 ),
