@@ -7,6 +7,9 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 -
 
+## [1.0.7] - 2017-01-25
+- Added filter for payment source description and URL.
+
 ## [1.0.6] - 2016-10-20
 - Fixed text domain.
 
@@ -36,7 +39,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.6...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.7...HEAD
+[1.0.7]: https://github.com/wp-pay-extensions/membership/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/wp-pay-extensions/membership/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/wp-pay-extensions/membership/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/wp-pay-extensions/membership/compare/1.0.3...1.0.4
