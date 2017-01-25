@@ -3,11 +3,11 @@
 /**
  * Title: WordPress pay WPMU DEV Membership extension
  * Description:
- * Copyright: Copyright (c) 2005 - 2016
+ * Copyright: Copyright (c) 2005 - 2017
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.5
+ * @version 1.0.7
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
@@ -103,6 +103,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 1 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG,   array( __CLASS__, 'source_text' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_url_' . self::SLUG,   array( __CLASS__, 'source_url' ), 10, 2 );
 
 			if ( is_admin() ) {
 				$admin = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin();
@@ -269,6 +271,28 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		);
 
 		return $text;
+	}
+
+	/**
+	 * Source description.
+	 */
+	public function source_description( $description, Pronamic_Pay_Payment $payment ) {
+		$description = __( 'Membership Transaction', 'pronamic_ideal' );
+
+		return $description;
+	}
+
+	/**
+	 * Source URL.
+	 */
+	public function source_url( $url, Pronamic_Pay_Payment $payment ) {
+		$url = add_query_arg( array(
+			'page'    => 'membershipgateways',
+			'action'  => 'transactions',
+			'gateway' => 'pronamic_ideal',
+		), admin_url( 'admin.php' ) );
+
+		return $url;
 	}
 
 	//////////////////////////////////////////////////
