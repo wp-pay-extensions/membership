@@ -157,6 +157,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 		return $this->membership->user_email;
 	}
 
+	public function get_first_name() {
+		return $this->membership->first_name;
+	}
+
+	public function get_last_name() {
+		return $this->membership->last_name;
+	}
+
 	public function get_customer_name() {
 		return $this->membership->first_name . ' ' . $this->membership->last_name;
 	}
