@@ -1,6 +1,6 @@
 {
   "name": "membership",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Membership driver for the WordPress payment processing library.",
   "repository": {
     "type": "git",

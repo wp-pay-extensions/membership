@@ -7,7 +7,7 @@
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.5
+ * @version 1.0.8
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic_WP_Pay_PaymentData {
