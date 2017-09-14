@@ -7,7 +7,7 @@
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.5
+ * @version 1.0.8
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic_WP_Pay_PaymentData {
@@ -155,6 +155,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 
 	public function get_email() {
 		return $this->membership->user_email;
+	}
+
+	public function get_first_name() {
+		return $this->membership->first_name;
+	}
+
+	public function get_last_name() {
+		return $this->membership->last_name;
 	}
 
 	public function get_customer_name() {
