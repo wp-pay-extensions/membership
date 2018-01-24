@@ -1,4 +1,5 @@
 <?php
+use Pronamic\WordPress\Pay\Plugin;
 
 /**
  * Title: WordPress pay WPMU DEV Membership gateway
@@ -162,12 +163,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 			}
 
 			if ( isset( $subscription, $membership ) ) {
-				$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+				$gateway = Plugin::get_gateway( $config_id );
 
 				$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
 				// Start
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data, $this->payment_method );
+				$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
 
 				// Meta
 				update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
@@ -244,7 +245,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 
 			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
 
-			$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+			$gateway = Plugin::get_gateway( $config_id );
 
 			$gateway->set_payment_method( $this->payment_method );
 
@@ -266,7 +267,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 
 				printf(
 					'<img src="%s" alt="%s" />',
-					esc_attr( plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file ) ),
+					esc_attr( plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file ) ),
 					esc_attr__( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' )
 				);
 

@@ -1,4 +1,5 @@
 <?php
+use Pronamic\WordPress\Pay\Plugin;
 
 /**
  * Title: WordPress pay WPMU DEV Membership view settings
@@ -65,7 +66,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 				'id'            => 'config_id',
 				'type'          => MS_Helper_Html::INPUT_TYPE_SELECT,
 				'title'         => __( 'Configuration', 'pronamic_ideal' ),
-				'field_options' => Pronamic_WP_Pay_Plugin::get_config_select_options(),
+				'field_options' => Plugin::get_config_select_options(),
 				'value'         => $this->gateway->config_id,
 				'class'         => 'ms-text-large',
 				'ajax_data'     => array( 1 ),
@@ -83,7 +84,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 				'type' => MS_Helper_Html::TYPE_HTML_TEXT,
 				'value' => '<span class="ms-settings-description ms-description">' . sprintf(
 					__( 'Default: <code>%s</code>', 'pronamic_ideal' ),
-					plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file )
+					plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file )
 				) . '</span>',
 			),
 			'button_description' => array(

@@ -1,4 +1,5 @@
 <?php
+use Pronamic\WordPress\Pay\Plugin;
 
 /**
  * Title: WordPress pay WPMU DEV Membership view button
@@ -32,9 +33,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 
 		$ms_gateway = $this->data['gateway'];
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $ms_gateway->config_id );
+		$gateway = Plugin::get_gateway( $ms_gateway->config_id );
 
-		// Don't set payment method here as the issuer id is unknown when Pronamic_WP_Pay_Plugin::start() creates
+		// Don't set payment method here as the issuer id is unknown when Pronamic\WordPress\Pay\Pronamic_WP_Pay_Plugin::start() creates
 		// the payment. Therefore, any chosen banks won't get used for the payment.
 
 		$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
@@ -50,7 +51,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton extends MS_View {
 			echo '<form id="pronamic-pay-form" method="post">';
 
 			// Button image URL
-			$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Pronamic_WP_Pay_Plugin::$file );
+			$button_image_url = plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file );
 
 			if ( isset( $ms_gateway->button_image_url ) && '' !== $ms_gateway->button_image_url ) {
 				$button_image_url = $ms_gateway->button_image_url;

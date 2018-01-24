@@ -1,4 +1,5 @@
 <?php
+use Pronamic\WordPress\Pay\Payments\Payment;
 
 /**
  * Title: WordPress pay WPMU DEV Membership extension
@@ -133,8 +134,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	 * Payment redirect URL filter.
 	 *
 	 * @param string                  $url
-	 * @param Pronamic_WP_Pay_Payment $payment
-	 * @return string
+	 * @param Payment $payment
+	 *
+*@return string
 	 */
 	public static function redirect_url( $url, $payment ) {
 		// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
