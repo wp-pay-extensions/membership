@@ -1,4 +1,5 @@
 <?php
+use Pronamic\WordPress\Pay\Core\PaymentMethods;
 
 /**
  * Title: WordPress pay WPMU DEV Membership iDEAL gateway
@@ -39,7 +40,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway extends Pronami
 	 *
 	 * @var string
 	 */
-	public $payment_method = Pronamic_WP_Pay_PaymentMethods::IDEAL;
+	public $payment_method = PaymentMethods::IDEAL;
 
 	//////////////////////////////////////////////////
 

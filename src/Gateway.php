@@ -1,5 +1,6 @@
 <?php
 use Pronamic\WordPress\Pay\Plugin;
+use Pronamic\WordPress\Pay\Util;
 
 /**
  * Title: WordPress pay WPMU DEV Membership gateway
@@ -290,7 +291,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 					}
 				}
 
-				echo Pronamic_IDeal_IDeal::htmlHiddenFields( $fields );
+				echo Util::html_hidden_fields( $fields );
 
 				// Submit button
 				printf(

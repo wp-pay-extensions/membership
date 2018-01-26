@@ -1,4 +1,7 @@
 <?php
+use Pronamic\WordPress\Pay\Core\Pronamic_WP_Pay_Class;
+use Pronamic\WordPress\Pay\Core\Statuses;
+use Pronamic\WordPress\Pay\Core\Util;
 use Pronamic\WordPress\Pay\Payments\Payment;
 
 /**
@@ -140,7 +143,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	 */
 	public static function redirect_url( $url, $payment ) {
 		// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
-		if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+		if ( Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 
 			// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
 			$url = MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER );
@@ -153,10 +156,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		}
 
 		switch ( $payment->get_status() ) {
-			case Pronamic_WP_Pay_Statuses::SUCCESS :
+			case Statuses::SUCCESS :
 
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
-				if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+				if ( Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 					$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
 
 					$invoice = MS_Factory::load( 'MS_Model_Invoice', $invoice_id );
@@ -197,7 +200,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		$status     = $payment->get_status();
 		$note       = '';
 
-		if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Factory', 'load' ) && class_exists( 'MS_Model_Invoice' ) ) {
+		if ( Util::class_method_exists( 'MS_Factory', 'load' ) && class_exists( 'MS_Model_Invoice' ) ) {
 			$invoice = MS_Factory::load( 'MS_Model_Invoice', $invoice_id );
 
 			$gateway_id = $invoice->gateway_id;
@@ -219,12 +222,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		}
 
 		switch ( $payment->get_status() ) {
-			case Pronamic_WP_Pay_Statuses::OPEN:
+			case Statuses::OPEN:
 				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L871
 				do_action( 'membership_payment_pending', $user_id, $sub_id, $amount, $currency, $payment->get_id() );
 
 				break;
-			case Pronamic_WP_Pay_Statuses::SUCCESS :
+			case Statuses::SUCCESS :
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/class-ms-factory.php#L116-L184
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-invoice.php
 				if ( isset( $gateway, $invoice ) && ! $invoice->is_paid() ) {

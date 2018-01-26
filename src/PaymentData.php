@@ -1,5 +1,7 @@
 <?php
 use Pronamic\WordPress\Pay\Payments\PaymentData;
+use Pronamic\WordPress\Pay\Payments\Item;
+use Pronamic\WordPress\Pay\Payments\Items;
 
 /**
  * Title: WordPress pay WPMU DEV Membership payment data
@@ -123,9 +125,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends PaymentD
 			}
 		}
 
-		$items = new Pronamic_IDeal_Items();
+		$items = new Items();
 
-		$item = new Pronamic_IDeal_Item();
+		$item = new Item();
 		$item->setNumber( $this->get_order_id() );
 		$item->setDescription( $this->get_description() );
 		$item->setPrice( $pricing_array[0]['amount'] );
