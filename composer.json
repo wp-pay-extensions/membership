@@ -24,7 +24,9 @@
 		"source": "https://github.com/wp-pay-extensions/membership"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"psr-4": {
+			"Pronamic\\WordPress\\Pay\\Extensions\\Membership\\": "src/"
+		}
 	},
 	"config": {
 		"platform": {

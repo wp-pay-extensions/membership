@@ -1,4 +1,16 @@
 <?php
 
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewSettings extends Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings {
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
+use Pronamic\WordPress\Pay\Core\PaymentMethods;
+
+class IDealViewSettings extends ViewSettings {
+	/**
+	 * Payment method.
+	 *
+	 * @since unreleased
+	 *
+	 * @var string $payment_method
+	 */
+	protected $payment_method = PaymentMethods::IDEAL;
 }

@@ -1,16 +1,18 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
 /**
  * Title: WordPress pay WPMU DEV Membership admin
  * Description:
  * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
+ * @author  Remco Tolsma
  * @version 1.0.1
- * @since 1.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
+class Admin {
 	/**
 	 * Bootstrap
 	 */
@@ -44,14 +46,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
 		);
 
 		add_settings_field(
-			Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID, // id
+			Extension::OPTION_CONFIG_ID, // id
 			__( 'Configuration', 'pronamic_ideal' ), // title
-			array( 'Pronamic_WP_Pay_Admin', 'dropdown_configs' ), // callback
+			array( 'Pronamic\WordPress\Pay\Admin\AdminModule', 'dropdown_configs' ), // callback
 			'pronamic_pay_membership', // page
 			'pronamic_pay_membership_general', // section
 			array( // args
-				'name'      => Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID,
-				'label_for' => Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID,
+				'name'      => Extension::OPTION_CONFIG_ID,
+				'label_for' => Extension::OPTION_CONFIG_ID,
 			)
 		);
 
@@ -79,7 +81,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin {
 	/**
 	 * Page settings
 	 *
-	 * @return boolean
+	 * @return void
 	 */
 	public function page_settings() {
 		include dirname( __FILE__ ) . '/../views/html-admin-page-settings.php';

@@ -1,4 +1,10 @@
 <?php
+
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
+use MS_Controller_Gateway;
+use MS_Helper_Html;
+use MS_View;
 use Pronamic\WordPress\Pay\Plugin;
 
 /**
@@ -7,11 +13,19 @@ use Pronamic\WordPress\Pay\Plugin;
  * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
+ * @author  Remco Tolsma
  * @version 1.0.6
- * @since 1.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View {
+class ViewSettings extends MS_View {
+	/**
+	 * Payment method.
+	 *
+	 * @since unreleased
+	 * @var string $payment_method
+	 */
+	protected $payment_method = null;
+
 	/**
 	 * Gateway instance.
 	 *
@@ -33,7 +47,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 	protected function to_html() {
 		$this->gateway = $this->data['model'];
 
-		$fields = $this->prepare_ajax_fields( );
+		$fields = $this->prepare_ajax_fields();
 
 		ob_start();
 
@@ -62,16 +76,16 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 
 	protected function prepare_fields() {
 		$fields = array(
-			'config_id' => array(
+			'config_id'                => array(
 				'id'            => 'config_id',
 				'type'          => MS_Helper_Html::INPUT_TYPE_SELECT,
 				'title'         => __( 'Configuration', 'pronamic_ideal' ),
-				'field_options' => Plugin::get_config_select_options(),
+				'field_options' => Plugin::get_config_select_options( $this->payment_method ),
 				'value'         => $this->gateway->config_id,
 				'class'         => 'ms-text-large',
 				'ajax_data'     => array( 1 ),
 			),
-			'button_image_url' => array(
+			'button_image_url'         => array(
 				'id'        => 'button_image_url',
 				'type'      => MS_Helper_Html::INPUT_TYPE_TEXT,
 				'title'     => __( 'Button image URL', 'pronamic_ideal' ),
@@ -80,14 +94,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 				'ajax_data' => array( 1 ),
 			),
 			'button_image_url_default' => array(
-				'id' => 'button_image_url_default',
-				'type' => MS_Helper_Html::TYPE_HTML_TEXT,
+				'id'    => 'button_image_url_default',
+				'type'  => MS_Helper_Html::TYPE_HTML_TEXT,
 				'value' => '<span class="ms-settings-description ms-description">' . sprintf(
 					__( 'Default: <code>%s</code>', 'pronamic_ideal' ),
 					plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file )
 				) . '</span>',
 			),
-			'button_description' => array(
+			'button_description'       => array(
 				'id'        => 'button_description',
 				'type'      => MS_Helper_Html::INPUT_TYPE_TEXT,
 				'title'     => __( 'Button description', 'pronamic_ideal' ),
@@ -107,12 +121,14 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings extends MS_View
 
 		// Process the fields and add missing default attributes.
 		foreach ( $fields as $key => $field ) {
-			if ( ! empty( $field['ajax_data'] ) ) {
-				$fields[ $key ]['ajax_data']['field']      = $fields[ $key ]['id'];
-				$fields[ $key ]['ajax_data']['_wpnonce']   = $nonce;
-				$fields[ $key ]['ajax_data']['action']     = $this->action;
-				$fields[ $key ]['ajax_data']['gateway_id'] = $this->gateway->id;
+			if ( empty( $field['ajax_data'] ) ) {
+				continue;
 			}
+
+			$fields[ $key ]['ajax_data']['field']      = $fields[ $key ]['id'];
+			$fields[ $key ]['ajax_data']['_wpnonce']   = $nonce;
+			$fields[ $key ]['ajax_data']['action']     = $this->action;
+			$fields[ $key ]['ajax_data']['gateway_id'] = $this->gateway->id;
 		}
 
 		return $fields;

@@ -1,6 +1,13 @@
 <?php
+
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
+use M_Subscription;
+use Membership_Gateway;
+use MS_Factory;
+use Pronamic\WordPress\Pay\Core\PaymentMethods;
 use Pronamic\WordPress\Pay\Plugin;
-use Pronamic\WordPress\Pay\Util;
+use Pronamic\WordPress\Pay\Util as Pay_Util;
 
 /**
  * Title: WordPress pay WPMU DEV Membership gateway
@@ -8,11 +15,11 @@ use Pronamic\WordPress\Pay\Util;
  * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
+ * @author  Remco Tolsma
  * @version 1.0.5
- * @since 1.0.2
+ * @since   1.0.2
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_Gateway {
+class Gateway extends Membership_Gateway {
 	/**
 	 * Unique identifier for this gateway.
 	 *
@@ -75,27 +82,35 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	//////////////////////////////////////////////////
 
 	/**
-	 * Constructs and initliaze an Membership iDEAL gateway
+	 * Constructs and initialize an Membership iDEAL gateway
 	 */
 	public function __construct() {
 		parent::__construct();
 
-		$this->id = constant( get_class( $this ) . '::ID' );
+		$this->id      = static::ID;
+		$this->gateway = static::ID;
 
-		if ( ! isset( $this->name ) ) {
+		if ( $this->payment_method ) {
+			$this->name = PaymentMethods::get_name( $this->payment_method );
+		} else {
 			$this->name = __( 'Pronamic', 'pronamic_ideal' );
 		}
 
+		// Set title
+		$this->title = $this->name;
+
 		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.freesubscriptions.php#L30
 		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L97
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
-			add_action( 'init', array( $this, 'maybe_pay' ) );
-
-			// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
-			add_action( 'membership_purchase_button', array( $this, 'purchase_button' ), 1, 3 );
-
-			add_action( 'ms_gateway_changed_' . $this->id, array( $this, 'update_settings' ) );
+		if ( ! Membership::is_active() ) {
+			return;
 		}
+
+		add_action( 'init', array( $this, 'maybe_pay' ) );
+
+		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
+		add_action( 'membership_purchase_button', array( $this, 'purchase_button' ), 1, 3 );
+
+		add_action( 'ms_gateway_changed_' . $this->id, array( $this, 'update_settings' ) );
 	}
 
 	//////////////////////////////////////////////////
@@ -144,70 +159,74 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	public function maybe_pay() {
 		$pay_membership = sprintf( 'pronamic_pay_membership_%s', $this->gateway );
 
-		if ( filter_has_var( INPUT_POST, $pay_membership ) ) {
-			// Data
-			$subscription_id = filter_input( INPUT_POST, 'subscription_id', FILTER_SANITIZE_STRING );
-			$user_id         = filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_STRING );
+		if ( ! filter_has_var( INPUT_POST, $pay_membership ) ) {
+			return;
+		}
 
-			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-				$subscription = MS_Factory::load( 'MS_Model_Relationship', $subscription_id );
+		// Data
+		$subscription_id = filter_input( INPUT_POST, 'subscription_id', FILTER_SANITIZE_STRING );
+		$user_id         = filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_STRING );
 
-				$membership = $subscription->get_membership();
+		if ( Extension::is_membership2() ) {
+			$subscription = MS_Factory::load( 'MS_Model_Relationship', $subscription_id );
 
-				$config_id = $this->config_id;
-			} else {
-				$subscription = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_subscription( $subscription_id );
+			$membership = $subscription->get_membership();
 
-				$membership   = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
+			$config_id = $this->config_id;
+		} else {
+			$subscription = Membership::get_subscription( $subscription_id );
 
-				$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
-			}
+			$membership = Membership::get_membership( $user_id );
 
-			if ( isset( $subscription, $membership ) ) {
-				$gateway = Plugin::get_gateway( $config_id );
+			$config_id = get_option( Extension::OPTION_CONFIG_ID );
+		}
 
-				$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
+		if ( ! $subscription || ! $membership ) {
+			return;
+		}
 
-				// Start
-				$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
+		$gateway = Plugin::get_gateway( $config_id );
 
-				// Meta
-				update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
-				update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', $data->get_subscription_id() );
+		$data = new PaymentData( $subscription, $membership );
 
-				if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-					$invoice = $subscription->get_current_invoice();
+		// Start
+		$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
 
-					$invoice->gateway_id = $this->id;
+		// Meta
+		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
+		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', $data->get_subscription_id() );
 
-					$invoice->save();
+		if ( Extension::is_membership2() ) {
+			$invoice = $subscription->get_current_invoice();
 
-					update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
-				}
+			$invoice->gateway_id = $this->id;
 
-				// Membership record transaction
-				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
-				$this->pronamic_record_transaction(
-					$user_id, // User ID
-					$data->get_subscription_id(), // Sub ID
-					$data->get_amount(), // Amount
-					$data->get_currency(), // Currency
-					time(), // Timestamp
-					$payment->get_id(), // PayPal ID
-					'', // Status
-					'' // Note
-				);
+			$invoice->save();
 
-				// Error
-				$error = $gateway->get_error();
+			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
+		}
 
-				if ( is_wp_error( $error ) ) {
-					$this->error = $error;
-				} else {
-					// Redirect
-					$gateway->redirect( $payment );
-				}
-			}
+		// Membership record transaction
+		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		$this->pronamic_record_transaction(
+			$user_id, // User ID
+			$data->get_subscription_id(), // Sub ID
+			$data->get_amount(), // Amount
+			$data->get_currency(), // Currency
+			time(), // Timestamp
+			$payment->get_id(), // PayPal ID
+			'', // Status
+			'' // Note
+		);
+
+		// Error
+		$error = $gateway->get_error();
+
+		if ( is_wp_error( $error ) ) {
+			$this->error = $error;
+		} else {
+			// Redirect
+			$gateway->redirect( $payment );
 		}
 	}
 
@@ -219,10 +238,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
 	 *
 	 * @param M_Subscription $subscription
-	 *     @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php
 	 *
-	 * @param array $pricing
-	 *     @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L110
+	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php
+	 *
+	 * @param array          $pricing
+	 *
+	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L110
 	 *
 	 *     array(
 	 *         array(
@@ -233,84 +254,86 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 	 *         )
 	 *     )
 	 *
-	 * @param int $user_id WordPress user/member ID
+	 * @param int            $user_id WordPress user/member ID
 	 */
 	public function purchase_button( $subscription, $pricing, $user_id ) {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_pricing_free( $pricing ) ) {
+		if ( Membership::is_pricing_free( $pricing ) ) {
 			// @todo what todo?
 			return;
+		}
+
+		$membership = Membership::get_membership( $user_id );
+
+		$config_id = get_option( Extension::OPTION_CONFIG_ID );
+
+		$data = new PaymentData( $subscription, $membership );
+
+		$gateway = Plugin::get_gateway( $config_id );
+
+		if ( ! $gateway ) {
+			return;
+		}
+
+		$gateway->set_payment_method( $this->payment_method );
+
+		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
+		if ( 'new' === strtolower( Membership::get_option( 'formtype' ) ) ) {
+			$action = add_query_arg( array(
+				'action'       => 'buynow',
+				'subscription' => $data->get_subscription_id(),
+			), admin_url( 'admin-ajax.php' ) );
 		} else {
-			$membership = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_membership( $user_id );
+			$action = '#pronamic-pay-form';
+		}
 
-			$config_id = get_option( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID );
+		printf(
+			'<form id="pronamic-pay-form" method="post" action="%s">',
+			esc_attr( $action )
+		);
 
-			$data = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData( $subscription, $membership );
+		printf(
+			'<img src="%s" alt="%s" />',
+			esc_attr( plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file ) ),
+			esc_attr__( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' )
+		);
 
-			$gateway = Plugin::get_gateway( $config_id );
+		echo '<div style="margin-top: 1em;">';
 
-			$gateway->set_payment_method( $this->payment_method );
+		echo $gateway->get_input_html(); // WPCS: xss ok.
 
-			if ( $gateway ) {
-				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
-				if ( 'new' === strtolower( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_option( 'formtype' ) ) ) {
-					$action = add_query_arg( array(
-						'action'       => 'buynow',
-						'subscription' => $data->get_subscription_id(),
-					), admin_url( 'admin-ajax.php' ) );
-				} else {
-					$action = '#pronamic-pay-form';
-				}
+		// Data
+		$fields = array(
+			'subscription_id' => $data->get_subscription_id(),
+			'user_id'         => $user_id,
+		);
 
-				printf(
-					'<form id="pronamic-pay-form" method="post" action="%s">',
-					$action
-				);
+		// Coupon
+		if ( function_exists( 'membership_get_current_coupon' ) ) {
+			$coupon = membership_get_current_coupon();
 
-				printf(
-					'<img src="%s" alt="%s" />',
-					esc_attr( plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file ) ),
-					esc_attr__( 'iDEAL - Online payment through your own bank', 'pronamic_ideal' )
-				);
-
-				echo '<div style="margin-top: 1em;">';
-
-				echo $gateway->get_input_html();
-
-				// Data
-				$fields = array(
-					'subscription_id' => $data->get_subscription_id(),
-					'user_id'         => $user_id,
-				);
-
-				// Coupon
-				if ( function_exists( 'membership_get_current_coupon' ) ) {
-					$coupon = membership_get_current_coupon();
-
-					if ( $coupon ) {
-						$fields['coupon_code'] = $coupon->get_coupon_code();
-					}
-				}
-
-				echo Util::html_hidden_fields( $fields );
-
-				// Submit button
-				printf(
-					'<input type="submit" name="pronamic_pay_membership_%s" value="%s" />',
-					esc_attr( $this->gateway ),
-					esc_attr__( 'Pay', 'pronamic_ideal' )
-				);
-
-				echo '</div>';
-
-				if ( isset( $this->error ) && is_wp_error( $this->error ) ) {
-					foreach ( $this->error->get_error_messages() as $message ) {
-						echo $message, '<br />';
-					}
-				}
-
-				printf( '</form>' );
+			if ( $coupon ) {
+				$fields['coupon_code'] = $coupon->get_coupon_code();
 			}
 		}
+
+		echo Pay_Util::html_hidden_fields( $fields ); // WPCS: xss ok.
+
+		// Submit button
+		printf(
+			'<input type="submit" name="pronamic_pay_membership_%s" value="%s" />',
+			esc_attr( $this->gateway ),
+			esc_attr__( 'Pay', 'pronamic_ideal' )
+		);
+
+		echo '</div>';
+
+		if ( isset( $this->error ) && is_wp_error( $this->error ) ) {
+			foreach ( $this->error->get_error_messages() as $message ) {
+				echo esc_html( $message ), '<br />';
+			}
+		}
+
+		printf( '</form>' );
 	}
 
 	//////////////////////////////////////////////////
@@ -327,10 +350,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway extends Membership_G
 
 	/**
 	 * Update gateway configuration
+	 *
+	 * @param $gateway
 	 */
-	function update_settings( $gateway ) {
+	public function update_settings( $gateway ) {
 		$update = array(
-			Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::OPTION_CONFIG_ID => 'config_id',
+			Extension::OPTION_CONFIG_ID => 'config_id',
 		);
 
 		foreach ( $update as $option => $field ) {

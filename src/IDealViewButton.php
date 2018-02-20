@@ -1,8 +1,10 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
 
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewButton extends Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton {
+class IDealViewButton extends ViewButton {
 	/**
 	 * Payment method.
 	 *
