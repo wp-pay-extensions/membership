@@ -22,16 +22,12 @@ class Admin {
 		add_action( 'membership_add_menu_items_after_gateways', array( $this, 'add_menu_items' ) );
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Admin initialize
 	 */
 	public function admin_init() {
 		$this->settings_init();
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Settings initialize
@@ -60,8 +56,6 @@ class Admin {
 		register_setting( 'pronamic_pay_membership', 'pronamic_pay_membership_config_id' );
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Add menu items
 	 */
@@ -75,8 +69,6 @@ class Admin {
 			array( $this, 'page_settings' )
 		);
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Page settings

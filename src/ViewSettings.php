@@ -42,8 +42,6 @@ class ViewSettings extends MS_View {
 	 */
 	protected $action = MS_Controller_Gateway::AJAX_ACTION_UPDATE_GATEWAY;
 
-	//////////////////////////////////////////////////
-
 	protected function to_html() {
 		$this->gateway = $this->data['model'];
 

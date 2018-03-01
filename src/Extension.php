@@ -45,8 +45,6 @@ class Extension {
 		'pronamic_ideal' => 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway',
 	);
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Bootstrap
 	 */
@@ -62,8 +60,6 @@ class Extension {
 			class_alias( 'MS_Gateway', 'Membership_Gateway' );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Plugins loaded
@@ -125,13 +121,9 @@ class Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	public static function is_membership2() {
 		return class_exists( 'MS_Gateway' ) && ( ! function_exists( 'membership2_use_old' ) || ! membership2_use_old() );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Register gateway
@@ -258,8 +250,6 @@ class Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Source text.
 	 *
@@ -313,8 +303,6 @@ class Extension {
 
 		return $url;
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Add the Pronamic iDEAL gateway to the activated gateways array if the

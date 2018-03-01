@@ -25,8 +25,6 @@ class ViewButton extends MS_View {
 	 */
 	protected $payment_method = null;
 
-	//////////////////////////////////////////////////
-
 	public function to_html() {
 		global $current_user;
 

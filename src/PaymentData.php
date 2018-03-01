@@ -34,8 +34,6 @@ class PaymentData extends Pay_PaymentData {
 	 */
 	public $membership;
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Constructs and initialize payment data object
 	 *
@@ -73,10 +71,6 @@ class PaymentData extends Pay_PaymentData {
 		}
 	}
 
-	//////////////////////////////////////////////////
-	// WPMU DEV Membership specific data
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get subscription ID
 	 *
@@ -91,8 +85,6 @@ class PaymentData extends Pay_PaymentData {
 		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
 		return $this->subscription->sub_id();
 	}
-
-	//////////////////////////////////////////////////
 
 	public function get_source() {
 		return 'membership';
@@ -142,10 +134,6 @@ class PaymentData extends Pay_PaymentData {
 		return $items;
 	}
 
-	//////////////////////////////////////////////////
-	// Currency
-	//////////////////////////////////////////////////
-
 	public function get_currency_alphabetic_code() {
 		$currency = Membership::get_option( 'paymentcurrency' );
 
@@ -155,10 +143,6 @@ class PaymentData extends Pay_PaymentData {
 
 		return $currency;
 	}
-
-	//////////////////////////////////////////////////
-	// Customer
-	//////////////////////////////////////////////////
 
 	public function get_email() {
 		return $this->membership->user_email;
@@ -187,8 +171,6 @@ class PaymentData extends Pay_PaymentData {
 	public function get_zip() {
 		return '';
 	}
-
-	//////////////////
 
 	public function get_normal_return_url() {
 		if ( Extension::is_membership2() ) {

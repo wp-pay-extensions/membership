@@ -51,8 +51,6 @@ class Membership {
 		return true;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get an subscription by an subscription ID
 	 *

@@ -79,8 +79,6 @@ class Gateway extends Membership_Gateway {
 	 */
 	protected $button_description;
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Constructs and initialize an Membership iDEAL gateway
 	 */
@@ -113,8 +111,6 @@ class Gateway extends Membership_Gateway {
 		add_action( 'ms_gateway_changed_' . $this->id, array( $this, 'update_settings' ) );
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Hook to add custom transaction status.
 	 * This is called by the MS_Factory
@@ -129,8 +125,6 @@ class Gateway extends Membership_Gateway {
 		$this->pro_rate       = true;
 		$this->mode           = 'live';
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Record transaction helper function
@@ -150,8 +144,6 @@ class Gateway extends Membership_Gateway {
 			$this->_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Maybe pay
@@ -229,8 +221,6 @@ class Gateway extends Membership_Gateway {
 			$gateway->redirect( $payment );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Purchase button
@@ -335,8 +325,6 @@ class Gateway extends Membership_Gateway {
 
 		printf( '</form>' );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Update
