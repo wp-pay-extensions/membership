@@ -95,6 +95,7 @@ class ViewSettings extends MS_View {
 				'id'    => 'button_image_url_default',
 				'type'  => MS_Helper_Html::TYPE_HTML_TEXT,
 				'value' => '<span class="ms-settings-description ms-description">' . sprintf(
+					/* translators: %s: <code>image url</code> */
 					__( 'Default: <code>%s</code>', 'pronamic_ideal' ),
 					plugins_url( 'images/ideal-logo-pay-off-2-lines.png', Plugin::$file )
 				) . '</span>',

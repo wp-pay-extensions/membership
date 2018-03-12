@@ -56,14 +56,14 @@ class PaymentData extends Pay_PaymentData {
 		}
 
 		switch ( get_class( $subscription ) ) {
-			case 'M_Subscription' :
-			case 'Membership_Model_Subscription' :
+			case 'M_Subscription':
+			case 'Membership_Model_Subscription':
 				$this->subscription = $subscription;
 				$this->membership   = $membership;
 
 				break;
-			case 'MS_Model_Relationship' :
-			default :
+			case 'MS_Model_Relationship':
+			default:
 				global $current_user;
 
 				$this->membership   = $subscription->get_membership();
