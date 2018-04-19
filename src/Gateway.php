@@ -203,7 +203,7 @@ class Gateway extends Membership_Gateway {
 		$this->pronamic_record_transaction(
 			$user_id, // User ID
 			$data->get_subscription_id(), // Sub ID
-			$data->get_amount(), // Amount
+			$data->get_amount()->get_amount(), // Amount
 			$data->get_currency(), // Currency
 			time(), // Timestamp
 			$payment->get_id(), // PayPal ID
