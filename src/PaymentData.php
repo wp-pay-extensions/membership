@@ -1,16 +1,25 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
+use Membership_Model_Member;
+use Membership_Model_Subscription;
+use MS_Model_Pages;
+use Pronamic\WordPress\Pay\Payments\PaymentData as Pay_PaymentData;
+use Pronamic\WordPress\Pay\Payments\Item;
+use Pronamic\WordPress\Pay\Payments\Items;
+
 /**
  * Title: WordPress pay WPMU DEV Membership payment data
  * Description:
- * Copyright: Copyright (c) 2005 - 2017
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.8
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic_WP_Pay_PaymentData {
+class PaymentData extends Pay_PaymentData {
 	/**
 	 * Subscription
 	 *
@@ -25,19 +34,19 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	 */
 	public $membership;
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Constructs and initialize payment data object
 	 *
 	 * @param mixed $subscription
 	 *      Membership         v3.4.4.1 = M_Subscription
 	 *      Membership Premium v3.5.1.2 = Membership_Model_Subscription
-	 *      @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L21
+	 *
+	 * @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L21
+	 *
 	 * @param mixed $membership
 	 *      Membership         v3.4.4.1 = M_Membership
 	 *      Membership Premium v3.5.1.2 = Membership_Model_Member
-	 *      @ee https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Member.php#L21
+	 * @ee https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Member.php#L21
 	 */
 	public function __construct( $subscription, $membership ) {
 		parent::__construct();
@@ -47,24 +56,20 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 		}
 
 		switch ( get_class( $subscription ) ) {
-			case 'M_Subscription' :
-			case 'Membership_Model_Subscription' :
+			case 'M_Subscription':
+			case 'Membership_Model_Subscription':
 				$this->subscription = $subscription;
 				$this->membership   = $membership;
 
 				break;
-			case 'MS_Model_Relationship' :
-			default :
+			case 'MS_Model_Relationship':
+			default:
 				global $current_user;
 
 				$this->membership   = $subscription->get_membership();
 				$this->subscription = $subscription->get_subscription( $current_user->ID, $this->membership->id );
 		}
 	}
-
-	//////////////////////////////////////////////////
-	// WPMU DEV Membership specific data
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get subscription ID
@@ -73,15 +78,13 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	 * @return string
 	 */
 	public function get_subscription_id() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			return $this->subscription->id;
 		}
 
 		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
 		return $this->subscription->sub_id();
 	}
-
-	//////////////////////////////////////////////////
 
 	public function get_source() {
 		return 'membership';
@@ -93,7 +96,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_description() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			return $this->subscription->name;
 		}
 
@@ -101,14 +104,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_items() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			$invoice = $this->subscription->get_current_invoice();
 
-			$pricing_array = array(
-				array(
-					'amount' => $invoice->total,
-				),
-			);
+			$pricing_array = array( array( 'amount' => $invoice->total ) );
 		} else {
 			$pricing_array = $this->subscription->get_pricingarray();
 
@@ -122,9 +121,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 			}
 		}
 
-		$items = new Pronamic_IDeal_Items();
+		$items = new Items();
 
-		$item = new Pronamic_IDeal_Item();
+		$item = new Item();
 		$item->setNumber( $this->get_order_id() );
 		$item->setDescription( $this->get_description() );
 		$item->setPrice( $pricing_array[0]['amount'] );
@@ -135,12 +134,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 		return $items;
 	}
 
-	//////////////////////////////////////////////////
-	// Currency
-	//////////////////////////////////////////////////
-
 	public function get_currency_alphabetic_code() {
-		$currency = Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::get_option( 'paymentcurrency' );
+		$currency = Membership::get_option( 'paymentcurrency' );
 
 		if ( empty( $currency ) ) {
 			$currency = 'EUR';
@@ -148,10 +143,6 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 
 		return $currency;
 	}
-
-	//////////////////////////////////////////////////
-	// Customer
-	//////////////////////////////////////////////////
 
 	public function get_email() {
 		return $this->membership->user_email;
@@ -181,10 +172,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 		return '';
 	}
 
-	//////////////////
-
 	public function get_normal_return_url() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			return esc_url_raw(
 				add_query_arg(
 					array( 'ms_relationship_id' => $this->subscription->id ),
@@ -197,7 +186,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_cancel_url() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			return esc_url_raw(
 				add_query_arg(
 					array( 'ms_relationship_id' => $this->subscription->id ),
@@ -208,7 +197,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_success_url() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			return esc_url_raw(
 				add_query_arg(
 					array( 'ms_relationship_id' => $this->subscription->id ),
@@ -221,6 +210,5 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_PaymentData extends Pronamic
 	}
 
 	public function get_error_url() {
-
 	}
 }

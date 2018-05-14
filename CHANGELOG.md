@@ -7,6 +7,9 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 -
 
+## [2.0.0] - 2018-05-14
+- Switched to PHP namespaces.
+
 ## [1.0.8] - 2017-09-14
 - Implemented `get_first_name()` and `get_last_name()`.
 
@@ -42,7 +45,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/membership/compare/1.0.8...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/membership/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/wp-pay-extensions/membership/compare/1.0.8...2.0.0
 [1.0.8]: https://github.com/wp-pay-extensions/membership/compare/1.0.7...1.0.8
 [1.0.7]: https://github.com/wp-pay-extensions/membership/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/wp-pay-extensions/membership/compare/1.0.5...1.0.6

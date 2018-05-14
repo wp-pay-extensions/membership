@@ -1,16 +1,22 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
+use M_Membership;
+use M_Subscription;
+use Membership_Plugin;
+
 /**
  * Title: WordPress pay WPMU DEV Membership
  * Description:
- * Copyright: Copyright (c) 2005 - 2017
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.0
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
+class Membership {
 	/**
 	 * Check if Membership is active (Automattic/developer style)
 	 *
@@ -30,27 +36,27 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L578
 	 *
 	 * @param array $pricing
+	 *
+	 * @return bool
 	 */
 	public static function is_pricing_free( $pricing ) {
-		$free = true;
-
 		if ( is_array( $pricing ) ) {
 			foreach ( $pricing as $key => $price ) {
 				if ( isset( $price['amount'] ) && $price['amount'] > 0 ) {
-					$free = false;
+					return false;
 				}
 			}
 		}
 
-		return $free;
+		return true;
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get an subscription by an subscription ID
 	 *
 	 * @param int $subscription_id
+	 *
+	 * @return M_Subscription|null
 	 */
 	public static function get_subscription( $subscription_id ) {
 		$subscription = null;
@@ -73,6 +79,8 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 	 * Get an membership by an user ID
 	 *
 	 * @param int $user_id
+	 *
+	 * @return M_Membership|null
 	 */
 	public static function get_membership( $user_id ) {
 		$membership = null;
@@ -95,7 +103,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership {
 	 * Get option.
 	 *
 	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
-	 * @return string
+	 *
+	 * @param string $name
+	 *
+	 * @return string|bool
 	 */
 	public static function get_option( $name ) {
 		// @codingStandardsIgnoreStart

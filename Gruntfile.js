@@ -1,5 +1,7 @@
 module.exports = function( grunt ) {
-	// Project configuration.
+    require( 'load-grunt-tasks' )( grunt );
+
+    // Project configuration.
 	grunt.initConfig( {
 		// Package
 		pkg: grunt.file.readJSON( 'package.json' ),
@@ -9,49 +11,49 @@ module.exports = function( grunt ) {
 			all: [ 'Gruntfile.js', 'composer.json', 'package.json' ]
 		},
 
-		// PHP Code Sniffer
-		phpcs: {
-			application: {
-				src: [
-					'**/*.php',
-					'!node_modules/**',
-					'!vendor/**',
-					'!wp-content/**'
-				]
-			},
-			options: {
-				standard: 'phpcs.ruleset.xml',
-				showSniffCodes: true
-			}
-		},
+        // PHP Code Sniffer
+        phpcs: {
+            application: {
+                src: [
+                    '**/*.php',
+                    '!node_modules/**',
+                    '!vendor/**',
+                    '!wp-content/**'
+                ]
+            },
+            options: {
+                bin: 'vendor/bin/phpcs',
+                standard: 'phpcs.xml.dist',
+                showSniffCodes: true
+            }
+        },
 
-		// PHPLint
-		phplint: {
-			all: [ 'src/**/*.php' ]
-		},
+        // PHPLint
+        phplint: {
+            all: [ 'src/**/*.php' ]
+        },
 
-		// PHP Mess Detector
-		phpmd: {
-			application: {
-				dir: 'src'
-			},
-			options: {
-				exclude: 'node_modules',
-				reportFormat: 'xml',
-				rulesets: 'phpmd.ruleset.xml'
-			}
-		},
-		
-		// PHPUnit
-		phpunit: {
-			application: {},
-		},
+        // PHP Mess Detector
+        phpmd: {
+            application: {
+                dir: 'src'
+            },
+            options: {
+                bin: 'vendor/bin/phpmd',
+                exclude: 'node_modules',
+                reportFormat: 'xml',
+                rulesets: 'phpmd.xml.dist'
+            }
+        },
+
+        // PHPUnit
+        phpunit: {
+            options: {
+                bin: 'vendor/bin/phpunit'
+            },
+            application: {}
+        }
 	} );
-
-	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
-	grunt.loadNpmTasks( 'grunt-phpcs' );
-	grunt.loadNpmTasks( 'grunt-phplint' );
-	grunt.loadNpmTasks( 'grunt-phpmd' );
 
 	// Default task(s).
 	grunt.registerTask( 'default', [ 'jshint', 'phplint', 'phpmd', 'phpcs' ] );

@@ -1,16 +1,26 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\Membership;
+
+use M_Membership;
+use Membership_Gateway;
+use MS_Factory;
+use MS_Model_Pages;
+use Pronamic\WordPress\Pay\Core\Statuses;
+use Pronamic\WordPress\Pay\Core\Util as Core_Util;
+use Pronamic\WordPress\Pay\Payments\Payment;
+
 /**
  * Title: WordPress pay WPMU DEV Membership extension
  * Description:
- * Copyright: Copyright (c) 2005 - 2017
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.7
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
+class Extension {
 	/**
 	 * The slug of this addon
 	 *
@@ -30,11 +40,10 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	 *
 	 * @var array
 	 */
-	static $gateways = array(
-		'pronamic'       => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway',
-		'pronamic_ideal' => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway',
+	public static $gateways = array(
+		'pronamic'       => 'Pronamic\WordPress\Pay\Extensions\Membership\Gateway',
+		'pronamic_ideal' => 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway',
 	);
-	//////////////////////////////////////////////////
 
 	/**
 	 * Bootstrap
@@ -47,81 +56,81 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		// @see https://github.com/WordPress/WordPress/blob/3.8.2/wp-includes/option.php#L91
 		add_filter( 'option_membership_activated_gateways', array( __CLASS__, 'option_membership_activated_gateways' ) );
 
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
+		if ( Extension::is_membership2() ) {
 			class_alias( 'MS_Gateway', 'Membership_Gateway' );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Plugins loaded
 	 */
 	public static function plugins_loaded() {
-		if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Membership::is_active() ) {
-			// Backwards compatibility Membership <= 3.4
-			$class_aliases = array(
-				'M_Gateway'      => 'Membership_Gateway',
-				'M_Subscription' => 'Membership_Model_Subscription',
-				'M_Membership'   => 'Membership_Model_Member',
+		if ( ! Membership::is_active() ) {
+			return;
+		}
+
+		// Backwards compatibility Membership <= 3.4
+		$class_aliases = array(
+			'M_Gateway'      => 'Membership_Gateway',
+			'M_Subscription' => 'Membership_Model_Subscription',
+			'M_Membership'   => 'Membership_Model_Member',
+		);
+
+		if ( Extension::is_membership2() ) {
+			$m2_class_aliases = array(
+				'Pronamic\WordPress\Pay\Extensions\Membership\ViewSettings'      => 'MS_Gateway_Pronamic_View_Settings',
+				'Pronamic\WordPress\Pay\Extensions\Membership\IDealViewSettings' => 'MS_Gateway_Pronamic_ideal_View_Settings',
+				'Pronamic\WordPress\Pay\Extensions\Membership\ViewButton'        => 'Pronamic\WordPress\Pay\Extensions\Membership\Gateway_View_Button',
+				'Pronamic\WordPress\Pay\Extensions\Membership\IDealViewButton'   => 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway_View_Button',
 			);
 
-			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-				$m2_class_aliases = array(
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewSettings'      => 'MS_Gateway_Pronamic_View_Settings',
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewSettings' => 'MS_Gateway_Pronamic_ideal_View_Settings',
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_ViewButton'        => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Gateway_View_Button',
-					'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealViewButton'   => 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway_View_Button',
-				);
+			$class_aliases = array_merge( $class_aliases, $m2_class_aliases );
+		}
 
-				$class_aliases = array_merge( $class_aliases, $m2_class_aliases );
-			}
-
-			foreach ( $class_aliases as $orignal => $alias ) {
-				if ( class_exists( $orignal ) && ! class_exists( $alias ) ) {
-					// http://www.php.net/manual/en/function.class-alias.php
-					class_alias( $orignal, $alias );
-				}
-			}
-
-			// Register the Membership iDEAL gateway
-			// Membership < 3.5
-			if ( function_exists( 'M_register_gateway' ) ) {
-				M_register_gateway( 'pronamic_ideal', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway' );
-			}
-
-			// Membership >= 3.5
-			if ( method_exists( 'Membership_Gateway', 'register_gateway' ) ) {
-				Membership_Gateway::register_gateway( 'pronamic_ideal', 'Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_IDealGateway' );
-			}
-
-			// Membership2
-			if ( Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension::is_membership2() ) {
-				add_filter( 'ms_model_gateway_register', array( __CLASS__, 'register_gateway' ) );
-			}
-
-			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
-			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 1 );
-			add_filter( 'pronamic_payment_source_text_' . self::SLUG,   array( __CLASS__, 'source_text' ), 10, 2 );
-			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
-			add_filter( 'pronamic_payment_source_url_' . self::SLUG,   array( __CLASS__, 'source_url' ), 10, 2 );
-
-			if ( is_admin() ) {
-				$admin = new Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Admin();
+		foreach ( $class_aliases as $orignal => $alias ) {
+			if ( class_exists( $orignal ) && ! class_exists( $alias ) ) {
+				// http://www.php.net/manual/en/function.class-alias.php
+				class_alias( $orignal, $alias );
 			}
 		}
-	}
 
-	//////////////////////////////////////////////////
+		// Register the Membership iDEAL gateway
+		// Membership < 3.5
+		if ( function_exists( 'M_register_gateway' ) ) {
+			M_register_gateway( 'pronamic_ideal', 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway' );
+		}
+
+		// Membership >= 3.5
+		if ( method_exists( 'Membership_Gateway', 'register_gateway' ) ) {
+			Membership_Gateway::register_gateway( 'pronamic_ideal', 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway' );
+		}
+
+		// Membership2
+		if ( Extension::is_membership2() ) {
+			add_filter( 'ms_model_gateway_register', array( __CLASS__, 'register_gateway' ) );
+		}
+
+		add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
+		add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'status_update' ), 10, 1 );
+		add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
+
+		if ( is_admin() ) {
+			$admin = new Admin();
+		}
+	}
 
 	public static function is_membership2() {
 		return class_exists( 'MS_Gateway' ) && ( ! function_exists( 'membership2_use_old' ) || ! membership2_use_old() );
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Register gateway
+	 *
+	 * @param array $gateways
+	 *
+	 * @return array
 	 */
 	public static function register_gateway( $gateways ) {
 		$gateways = array_merge( $gateways, self::$gateways );
@@ -132,29 +141,25 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	/**
 	 * Payment redirect URL filter.
 	 *
-	 * @param string                  $url
-	 * @param Pronamic_WP_Pay_Payment $payment
+	 * @param string  $url
+	 * @param Payment $payment
+	 *
 	 * @return string
 	 */
 	public static function redirect_url( $url, $payment ) {
 		// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
-		if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
-
+		if ( Core_Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 			// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
 			$url = MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER );
-
 		} elseif ( function_exists( 'M_get_returnurl_permalink' ) ) {
-
 			// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L598-L622
 			$url = M_get_returnurl_permalink();
-
 		}
 
 		switch ( $payment->get_status() ) {
-			case Pronamic_WP_Pay_Statuses::SUCCESS :
-
+			case Statuses::SUCCESS:
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
-				if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
+				if ( Core_Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 					$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
 
 					$invoice = MS_Factory::load( 'MS_Model_Invoice', $invoice_id );
@@ -167,12 +172,9 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 						$subscription->id,
 						MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REG_COMPLETE )
 					);
-
 				} elseif ( function_exists( 'M_get_registrationcompleted_permalink' ) ) {
-
 					// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L576-L598
 					$url = M_get_registrationcompleted_permalink();
-
 				}
 
 				break;
@@ -184,18 +186,18 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 	/**
 	 * Update lead status of the specified payment
 	 *
-	 * @param Pronamic_Pay_Payment $payment
+	 * @param Payment $payment
 	 */
-	public static function status_update( Pronamic_Pay_Payment $payment ) {
+	public static function status_update( Payment $payment ) {
 		$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
 		$user_id    = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', true );
 		$sub_id     = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', true );
-		$amount     = $payment->get_amount();
-		$currency   = $payment->get_currency();
+		$amount     = $payment->get_amount()->get_amount();
+		$currency   = $payment->get_amount()->get_currency()->get_alphabetic_code();
 		$status     = $payment->get_status();
 		$note       = '';
 
-		if ( Pronamic_WP_Pay_Class::method_exists( 'MS_Factory', 'load' ) && class_exists( 'MS_Model_Invoice' ) ) {
+		if ( Core_Util::class_method_exists( 'MS_Factory', 'load' ) && class_exists( 'MS_Model_Invoice' ) ) {
 			$invoice = MS_Factory::load( 'MS_Model_Invoice', $invoice_id );
 
 			$gateway_id = $invoice->gateway_id;
@@ -217,12 +219,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		}
 
 		switch ( $payment->get_status() ) {
-			case Pronamic_WP_Pay_Statuses::OPEN:
+			case Statuses::OPEN:
 				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L871
 				do_action( 'membership_payment_pending', $user_id, $sub_id, $amount, $currency, $payment->get_id() );
 
 				break;
-			case Pronamic_WP_Pay_Statuses::SUCCESS :
+			case Statuses::SUCCESS:
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/class-ms-factory.php#L116-L184
 				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-invoice.php
 				if ( isset( $gateway, $invoice ) && ! $invoice->is_paid() ) {
@@ -248,16 +250,15 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
-	 * Source text
+	 * Source text.
 	 *
-	 * @param text $text
-	 * @param Pronamic_Pay_Payment $payment
+	 * @param string  $text
+	 * @param Payment $payment
+	 *
 	 * @return string
 	 */
-	public static function source_text( $text, Pronamic_Pay_Payment $payment ) {
+	public static function source_text( $text, Payment $payment ) {
 		$text = __( 'Membership', 'pronamic_ideal' ) . '<br />';
 
 		$text .= sprintf(
@@ -267,6 +268,7 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 				'action'  => 'transactions',
 				'gateway' => 'pronamic_ideal',
 			), admin_url( 'admin.php' ) ),
+			/* translators: %s: payment id */
 			sprintf( __( 'Transaction #%s', 'pronamic_ideal' ), $payment->get_id() )
 		);
 
@@ -275,17 +277,25 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 
 	/**
 	 * Source description.
+	 *
+	 * @param string  $description
+	 * @param Payment $payment
+	 *
+	 * @return string
 	 */
-	public function source_description( $description, Pronamic_Pay_Payment $payment ) {
-		$description = __( 'Membership Transaction', 'pronamic_ideal' );
-
-		return $description;
+	public function source_description( $description, Payment $payment ) {
+		return __( 'Membership Transaction', 'pronamic_ideal' );
 	}
 
 	/**
 	 * Source URL.
+	 *
+	 * @param string  $url
+	 * @param Payment $payment
+	 *
+	 * @return string
 	 */
-	public function source_url( $url, Pronamic_Pay_Payment $payment ) {
+	public function source_url( $url, Payment $payment ) {
 		$url = add_query_arg( array(
 			'page'    => 'membershipgateways',
 			'action'  => 'transactions',
@@ -295,13 +305,12 @@ class Pronamic_WP_Pay_Extensions_WPMUDEV_Membership_Extension {
 		return $url;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Add the Pronamic iDEAL gateway to the activated gateways array if the
 	 * config option is not empty
 	 *
 	 * @param array $gateways
+	 *
 	 * @return array
 	 */
 	public static function option_membership_activated_gateways( $gateways ) {
