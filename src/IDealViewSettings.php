@@ -8,7 +8,7 @@ class IDealViewSettings extends ViewSettings {
 	/**
 	 * Payment method.
 	 *
-	 * @since unreleased
+	 * @since 2.0.0
 	 *
 	 * @var string $payment_method
 	 */

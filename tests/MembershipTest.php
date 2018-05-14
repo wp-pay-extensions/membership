@@ -11,14 +11,14 @@ use PHPUnit_Framework_TestCase;
  * Company: Pronamic
  *
  * @author  Reüel van der Steege
- * @version unreleased
- * @since   unreleased
+ * @version 2.0.0
+ * @since   2.0.0
  */
 class MembershipTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Test class.
 	 */
 	public function test_class() {
-		$this->assertTrue( class_exists( 'Pronamic\WordPress\Pay\Extensions\Membership\Membership' ) );
+		$this->assertTrue( class_exists( __NAMESPACE__ . '\Membership' ) );
 	}
 }

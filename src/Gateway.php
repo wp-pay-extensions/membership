@@ -16,7 +16,7 @@ use Pronamic\WordPress\Pay\Util as Pay_Util;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 1.0.5
+ * @version 2.0.0
  * @since   1.0.2
  */
 class Gateway extends Membership_Gateway {
