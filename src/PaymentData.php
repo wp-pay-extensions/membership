@@ -78,21 +78,6 @@ class PaymentData extends Pay_PaymentData {
 		}
 	}
 
-	/**
-	 * Get subscription ID
-	 *
-	 * @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L57
-	 * @return string
-	 */
-	public function get_subscription_id() {
-		if ( Extension::is_membership2() ) {
-			return $this->subscription->id;
-		}
-
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
-		return $this->subscription->sub_id();
-	}
-
 	public function get_source() {
 		return 'membership';
 	}

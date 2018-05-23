@@ -76,6 +76,24 @@ class Membership {
 	}
 
 	/**
+	 * Get subscription ID
+	 *
+	 * @param M_Subscription $subscription The Membership subscription.
+	 *
+	 * @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L57
+	 *
+	 * @return string
+	 */
+	public static function get_subscription_id( $subscription ) {
+		if ( Extension::is_membership2() ) {
+			return $subscription->id;
+		}
+
+		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
+		return $subscription->sub_id();
+	}
+
+	/**
 	 * Get an membership by an user ID
 	 *
 	 * @param int $user_id

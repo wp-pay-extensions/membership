@@ -81,7 +81,7 @@ class ViewButton extends MS_View {
 
 		// Data
 		$fields = array(
-			'subscription_id' => $data->get_subscription_id(),
+			'subscription_id' => Membership::get_subscription_id( $subscription ),
 			'user_id'         => $current_user->ID,
 			'invoice_id'      => $invoice->id,
 		);
