@@ -35,6 +35,13 @@ class PaymentData extends Pay_PaymentData {
 	public $membership;
 
 	/**
+	 * Payment post id.
+	 *
+	 * @var int
+	 */
+	public $payment_post_id;
+
+	/**
 	 * Constructs and initialize payment data object
 	 *
 	 * @param mixed $subscription
