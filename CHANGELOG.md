@@ -5,7 +5,10 @@ All notable changes to this project will be documented in this file.
 This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a CHANGELOG](http://keepachangelog.com/).
 
 ## [Unreleased][unreleased]
-- Fix fatal error "Uncaught Exception: DateInterval::__construct(): Unknown or bad format (P)" 
+- 
+
+## [2.0.1] - 2018-06-01
+- Fix fatal error "Uncaught Exception: DateInterval::__construct(): Unknown or bad format (P)"
 
 ## [2.0.0] - 2018-05-14
 - Switched to PHP namespaces.
@@ -45,7 +48,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/membership/compare/2.0.0...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/membership/compare/2.0.1...HEAD
+[2.0.1]: https://github.com/wp-pay-extensions/membership/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/wp-pay-extensions/membership/compare/1.0.8...2.0.0
 [1.0.8]: https://github.com/wp-pay-extensions/membership/compare/1.0.7...1.0.8
 [1.0.7]: https://github.com/wp-pay-extensions/membership/compare/1.0.6...1.0.7
