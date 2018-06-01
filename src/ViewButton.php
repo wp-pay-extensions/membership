@@ -13,7 +13,7 @@ use Pronamic\WordPress\Pay\Util;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.0
+ * @version 2.0.1
  * @since   1.0.0
  */
 class ViewButton extends MS_View {
@@ -81,7 +81,7 @@ class ViewButton extends MS_View {
 
 		// Data
 		$fields = array(
-			'subscription_id' => $data->get_subscription_id(),
+			'subscription_id' => Membership::get_subscription_id( $subscription ),
 			'user_id'         => $current_user->ID,
 			'invoice_id'      => $invoice->id,
 		);

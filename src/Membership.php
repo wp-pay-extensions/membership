@@ -13,7 +13,7 @@ use Membership_Plugin;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.0
+ * @version 2.0.1
  * @since   1.0.0
  */
 class Membership {
@@ -73,6 +73,23 @@ class Membership {
 		}
 
 		return $subscription;
+	}
+
+	/**
+	 * Get subscription ID
+	 *
+	 * @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L57
+	 * @since 2.0.1
+	 * @param M_Subscription $subscription The Membership subscription.
+	 * @return string
+	 */
+	public static function get_subscription_id( $subscription ) {
+		if ( Extension::is_membership2() ) {
+			return $subscription->id;
+		}
+
+		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
+		return $subscription->sub_id();
 	}
 
 	/**

@@ -16,7 +16,7 @@ use Pronamic\WordPress\Pay\Payments\Items;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.0
+ * @version 2.0.1
  * @since   1.0.0
  */
 class PaymentData extends Pay_PaymentData {
@@ -33,6 +33,14 @@ class PaymentData extends Pay_PaymentData {
 	 * @var Membership_Model_Member
 	 */
 	public $membership;
+
+	/**
+	 * Payment post id.
+	 *
+	 * @since 2.0.1
+	 * @var int
+	 */
+	public $payment_post_id;
 
 	/**
 	 * Constructs and initialize payment data object
@@ -69,21 +77,6 @@ class PaymentData extends Pay_PaymentData {
 				$this->membership   = $subscription->get_membership();
 				$this->subscription = $subscription->get_subscription( $current_user->ID, $this->membership->id );
 		}
-	}
-
-	/**
-	 * Get subscription ID
-	 *
-	 * @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L57
-	 * @return string
-	 */
-	public function get_subscription_id() {
-		if ( Extension::is_membership2() ) {
-			return $this->subscription->id;
-		}
-
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
-		return $this->subscription->sub_id();
 	}
 
 	public function get_source() {

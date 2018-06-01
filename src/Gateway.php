@@ -16,7 +16,7 @@ use Pronamic\WordPress\Pay\Util as Pay_Util;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.0
+ * @version 2.0.1
  * @since   1.0.2
  */
 class Gateway extends Membership_Gateway {
@@ -186,7 +186,7 @@ class Gateway extends Membership_Gateway {
 
 		// Meta
 		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
-		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', $data->get_subscription_id() );
+		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', Membership::get_subscription_id( $subscription ) );
 
 		if ( Extension::is_membership2() ) {
 			$invoice = $subscription->get_current_invoice();
@@ -202,7 +202,7 @@ class Gateway extends Membership_Gateway {
 		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 		$this->pronamic_record_transaction(
 			$user_id, // User ID
-			$data->get_subscription_id(), // Sub ID
+			Membership::get_subscription_id( $subscription ), // Sub ID
 			$data->get_amount()->get_amount(), // Amount
 			$data->get_currency(), // Currency
 			time(), // Timestamp
@@ -270,7 +270,7 @@ class Gateway extends Membership_Gateway {
 		if ( 'new' === strtolower( Membership::get_option( 'formtype' ) ) ) {
 			$action = add_query_arg( array(
 				'action'       => 'buynow',
-				'subscription' => $data->get_subscription_id(),
+				'subscription' => Membership::get_subscription_id( $subscription ),
 			), admin_url( 'admin-ajax.php' ) );
 		} else {
 			$action = '#pronamic-pay-form';
@@ -293,7 +293,7 @@ class Gateway extends Membership_Gateway {
 
 		// Data
 		$fields = array(
-			'subscription_id' => $data->get_subscription_id(),
+			'subscription_id' => Membership::get_subscription_id( $subscription ),
 			'user_id'         => $user_id,
 		);
 
