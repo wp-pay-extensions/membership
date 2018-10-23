@@ -38,7 +38,7 @@ class Gateway extends Membership_Gateway {
 	/**
 	 * Gateway name/slug
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L10
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L10
 	 * @var string
 	 */
 	public $gateway = 'pronamic';
@@ -46,7 +46,7 @@ class Gateway extends Membership_Gateway {
 	/**
 	 * Gateway title
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L11
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L11
 	 * @var string
 	 */
 	public $title = 'Pronamic';
@@ -97,15 +97,15 @@ class Gateway extends Membership_Gateway {
 		// Set title
 		$this->title = $this->name;
 
-		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.freesubscriptions.php#L30
-		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L97
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.freesubscriptions.php#L30
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L97
 		if ( ! Membership::is_active() ) {
 			return;
 		}
 
 		add_action( 'init', array( $this, 'maybe_pay' ) );
 
-		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
 		add_action( 'membership_purchase_button', array( $this, 'purchase_button' ), 1, 3 );
 
 		add_action( 'ms_gateway_changed_' . $this->id, array( $this, 'update_settings' ) );
@@ -129,17 +129,17 @@ class Gateway extends Membership_Gateway {
 	/**
 	 * Record transaction helper function
 	 *
-	 * @see https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 	 */
 	public function pronamic_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note ) {
 		// Membership <= 3.4
-		// @see https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 		if ( method_exists( $this, 'record_transaction' ) ) {
 			$this->record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
 
 		// Membership >= 3.5
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Gateway.php#L256
+		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Gateway.php#L256
 		if ( method_exists( $this, '_record_transaction' ) ) {
 			$this->_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
@@ -199,7 +199,7 @@ class Gateway extends Membership_Gateway {
 		}
 
 		// Membership record transaction
-		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 		$this->pronamic_record_transaction(
 			$user_id, // User ID
 			Membership::get_subscription_id( $subscription ), // Sub ID
@@ -225,15 +225,15 @@ class Gateway extends Membership_Gateway {
 	/**
 	 * Purchase button
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
 	 *
 	 * @param M_Subscription $subscription
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php
 	 *
 	 * @param array          $pricing
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L110
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L110
 	 *
 	 *     array(
 	 *         array(
@@ -266,7 +266,7 @@ class Gateway extends Membership_Gateway {
 
 		$gateway->set_payment_method( $this->payment_method );
 
-		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
 		if ( 'new' === strtolower( Membership::get_option( 'formtype' ) ) ) {
 			$action = add_query_arg( array(
 				'action'       => 'buynow',

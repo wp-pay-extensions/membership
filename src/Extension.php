@@ -52,8 +52,8 @@ class Extension {
 		add_action( 'plugins_loaded', array( __CLASS__, 'plugins_loaded' ) );
 
 		// The gateways are loaded directly when the Membership plugin file is included
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/membershippremium.php#L234
-		// @see https://github.com/WordPress/WordPress/blob/3.8.2/wp-includes/option.php#L91
+		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/membershippremium.php#L234
+		// @link https://github.com/WordPress/WordPress/blob/3.8.2/wp-includes/option.php#L91
 		add_filter( 'option_membership_activated_gateways', array( __CLASS__, 'option_membership_activated_gateways' ) );
 
 		if ( Extension::is_membership2() ) {
@@ -147,18 +147,18 @@ class Extension {
 	 * @return string
 	 */
 	public static function redirect_url( $url, $payment ) {
-		// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
+		// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
 		if ( Core_Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
-			// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
+			// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
 			$url = MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REGISTER );
 		} elseif ( function_exists( 'M_get_returnurl_permalink' ) ) {
-			// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L598-L622
+			// @link https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L598-L622
 			$url = M_get_returnurl_permalink();
 		}
 
 		switch ( $payment->get_status() ) {
 			case Statuses::SUCCESS:
-				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
+				// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
 				if ( Core_Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 					$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
 
@@ -166,14 +166,14 @@ class Extension {
 
 					$subscription = $invoice->get_subscription();
 
-					// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
+					// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L44-L55
 					$url = add_query_arg(
 						'ms_relationship_id',
 						$subscription->id,
 						MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_REG_COMPLETE )
 					);
 				} elseif ( function_exists( 'M_get_registrationcompleted_permalink' ) ) {
-					// @see https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L576-L598
+					// @link https://github.com/wp-plugins/membership/blob/3.4.4.3/membershipincludes/includes/functions.php#L576-L598
 					$url = M_get_registrationcompleted_permalink();
 				}
 
@@ -214,19 +214,19 @@ class Extension {
 			}
 
 			// Membership record transaction
-			// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+			// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 			$gateway->pronamic_record_transaction( $user_id, $sub_id, $amount, $currency, time(), $payment->get_id(), $status, $note );
 		}
 
 		switch ( $payment->get_status() ) {
 			case Statuses::OPEN:
-				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L871
+				// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L871
 				do_action( 'membership_payment_pending', $user_id, $sub_id, $amount, $currency, $payment->get_id() );
 
 				break;
 			case Statuses::SUCCESS:
-				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/class-ms-factory.php#L116-L184
-				// @see https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-invoice.php
+				// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/class-ms-factory.php#L116-L184
+				// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-invoice.php
 				if ( isset( $gateway, $invoice ) && ! $invoice->is_paid() ) {
 					$invoice->pay_it( $gateway->gateway, $payment->get_id() );
 				}
@@ -240,10 +240,10 @@ class Extension {
 				}
 
 				// Added for affiliate system link
-				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L790
+				// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L790
 				do_action( 'membership_payment_processed', $user_id, $sub_id, $amount, $currency, $payment->get_id() );
 
-				// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L901
+				// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L901
 				do_action( 'membership_payment_subscr_signup', $user_id, $sub_id );
 
 				break;

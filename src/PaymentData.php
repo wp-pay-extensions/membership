@@ -49,7 +49,7 @@ class PaymentData extends Pay_PaymentData {
 	 *      Membership         v3.4.4.1 = M_Subscription
 	 *      Membership Premium v3.5.1.2 = Membership_Model_Subscription
 	 *
-	 * @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L21
+	 * @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L21
 	 *
 	 * @param mixed $membership
 	 *      Membership         v3.4.4.1 = M_Membership
