@@ -192,7 +192,7 @@ class Extension {
 		$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
 		$user_id    = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', true );
 		$sub_id     = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', true );
-		$amount     = $payment->get_total_amount()->get_amount();
+		$amount     = $payment->get_total_amount()->get_value();
 		$currency   = $payment->get_total_amount()->get_currency()->get_alphabetic_code();
 		$status     = $payment->get_status();
 		$note       = '';
