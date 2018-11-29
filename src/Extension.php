@@ -306,8 +306,7 @@ class Extension {
 	}
 
 	/**
-	 * Add the Pronamic iDEAL gateway to the activated gateways array if the
-	 * config option is not empty
+	 * Add the gateway to the activated gateways array if the config option is not empty
 	 *
 	 * @param array $gateways
 	 *

@@ -62,7 +62,7 @@ class Admin {
 	public function add_menu_items() {
 		add_submenu_page(
 			'membership',
-			__( 'Pronamic iDEAL Options', 'pronamic_ideal' ),
+			__( 'Pronamic Pay Options', 'pronamic_ideal' ),
 			__( 'iDEAL Options', 'pronamic_ideal' ),
 			'manage_options',
 			'pronamic_pay_membership_settings',
