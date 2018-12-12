@@ -16,7 +16,7 @@ use Pronamic\WordPress\Pay\Payments\Items;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.1
+ * @version 2.0.2
  * @since   1.0.0
  */
 class PaymentData extends Pay_PaymentData {
@@ -49,7 +49,7 @@ class PaymentData extends Pay_PaymentData {
 	 *      Membership         v3.4.4.1 = M_Subscription
 	 *      Membership Premium v3.5.1.2 = Membership_Model_Subscription
 	 *
-	 * @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L21
+	 * @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L21
 	 *
 	 * @param mixed $membership
 	 *      Membership         v3.4.4.1 = M_Membership
@@ -117,10 +117,10 @@ class PaymentData extends Pay_PaymentData {
 		$items = new Items();
 
 		$item = new Item();
-		$item->setNumber( $this->get_order_id() );
-		$item->setDescription( $this->get_description() );
-		$item->setPrice( $pricing_array[0]['amount'] );
-		$item->setQuantity( 1 );
+		$item->set_number( $this->get_order_id() );
+		$item->set_description( $this->get_description() );
+		$item->set_price( $pricing_array[0]['amount'] );
+		$item->set_quantity( 1 );
 
 		$items->addItem( $item );
 

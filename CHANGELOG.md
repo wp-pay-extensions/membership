@@ -7,6 +7,9 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 - 
 
+## [2.0.2] - 2018-12-12
+- Update item methods in payment data.
+
 ## [2.0.1] - 2018-06-01
 - Fix fatal error "Uncaught Exception: DateInterval::__construct(): Unknown or bad format (P)"
 
@@ -48,7 +51,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/membership/compare/2.0.1...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/membership/compare/2.0.2...HEAD
+[2.0.2]: https://github.com/wp-pay-extensions/membership/compare/2.0.1...2.0.2
 [2.0.1]: https://github.com/wp-pay-extensions/membership/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/wp-pay-extensions/membership/compare/1.0.8...2.0.0
 [1.0.8]: https://github.com/wp-pay-extensions/membership/compare/1.0.7...1.0.8

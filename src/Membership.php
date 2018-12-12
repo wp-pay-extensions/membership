@@ -20,9 +20,9 @@ class Membership {
 	/**
 	 * Check if Membership is active (Automattic/developer style)
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membership.php
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.membership.php#L5
-	 * @see https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membership.php
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.membership.php#L5
+	 * @link https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
 	 *
 	 * @return boolean
 	 */
@@ -33,7 +33,7 @@ class Membership {
 	/**
 	 * Check if the Membership pricing array is free
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L578
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L578
 	 *
 	 * @param array $pricing
 	 *
@@ -61,14 +61,14 @@ class Membership {
 	public static function get_subscription( $subscription_id ) {
 		$subscription = null;
 
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L76
+		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L76
 		if ( method_exists( 'Membership_Plugin', 'factory' ) ) {
 			$factory = Membership_Plugin::factory();
 
-			// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L108
+			// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L108
 			$subscription = $factory->get_subscription( $subscription_id );
 		} elseif ( class_exists( 'M_Subscription' ) ) {
-			// @see https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L26
+			// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L26
 			$subscription = new M_Subscription( $subscription_id );
 		}
 
@@ -88,7 +88,7 @@ class Membership {
 			return $subscription->id;
 		}
 
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
+		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Model/Subscription.php#L32
 		return $subscription->sub_id();
 	}
 
@@ -102,14 +102,14 @@ class Membership {
 	public static function get_membership( $user_id ) {
 		$membership = null;
 
-		// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L76
+		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L76
 		if ( method_exists( 'Membership_Plugin', 'factory' ) ) {
 			$factory = Membership_Plugin::factory();
 
-			// @see https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L76
+			// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/classes/Membership/Factory.php#L76
 			$membership = $factory->get_member( $user_id );
 		} elseif ( class_exists( 'M_Membership' ) ) {
-			// @see https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.membership.php#L18
+			// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.membership.php#L18
 			$membership = new M_Membership( $user_id );
 		}
 
@@ -119,7 +119,7 @@ class Membership {
 	/**
 	 * Get option.
 	 *
-	 * @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
+	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
 	 *
 	 * @param string $name
 	 *
@@ -132,7 +132,7 @@ class Membership {
 		$options = $M_options;
 		// @codingStandardsIgnoreEnd
 
-		// @see http://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
+		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
 		if ( isset( $options[ $name ] ) ) {
 			return $options[ $name ];
 		}
