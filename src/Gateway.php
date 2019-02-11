@@ -351,7 +351,7 @@ class Gateway extends Membership_Gateway {
 	/**
 	 * Update gateway configuration
 	 *
-	 * @param $gateway Gateway.
+	 * @param Membership_Gateway $gateway Gateway.
 	 */
 	public function update_settings( $gateway ) {
 		$update = array(
