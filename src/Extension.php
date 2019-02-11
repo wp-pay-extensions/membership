@@ -51,12 +51,15 @@ class Extension {
 	public static function bootstrap() {
 		add_action( 'plugins_loaded', array( __CLASS__, 'plugins_loaded' ) );
 
-		// The gateways are loaded directly when the Membership plugin file is included
-		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/membershippremium.php#L234
-		// @link https://github.com/WordPress/WordPress/blob/3.8.2/wp-includes/option.php#L91
+		/*
+		 * The gateways are loaded directly when the Membership plugin file is included
+		 *
+		 * @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.3/membershippremium.php#L234
+		 * @link https://github.com/WordPress/WordPress/blob/3.8.2/wp-includes/option.php#L91
+		 */
 		add_filter( 'option_membership_activated_gateways', array( __CLASS__, 'option_membership_activated_gateways' ) );
 
-		if ( Extension::is_membership2() ) {
+		if ( self::is_membership2() ) {
 			class_alias( 'MS_Gateway', 'Membership_Gateway' );
 		}
 	}
@@ -69,14 +72,14 @@ class Extension {
 			return;
 		}
 
-		// Backwards compatibility Membership <= 3.4
+		// Backwards compatibility Membership <= 3.4.
 		$class_aliases = array(
 			'M_Gateway'      => 'Membership_Gateway',
 			'M_Subscription' => 'Membership_Model_Subscription',
 			'M_Membership'   => 'Membership_Model_Member',
 		);
 
-		if ( Extension::is_membership2() ) {
+		if ( self::is_membership2() ) {
 			$m2_class_aliases = array(
 				'Pronamic\WordPress\Pay\Extensions\Membership\ViewSettings'      => 'MS_Gateway_Pronamic_View_Settings',
 				'Pronamic\WordPress\Pay\Extensions\Membership\IDealViewSettings' => 'MS_Gateway_Pronamic_ideal_View_Settings',
@@ -89,24 +92,24 @@ class Extension {
 
 		foreach ( $class_aliases as $orignal => $alias ) {
 			if ( class_exists( $orignal ) && ! class_exists( $alias ) ) {
-				// http://www.php.net/manual/en/function.class-alias.php
+				// @link http://www.php.net/manual/en/function.class-alias.php
 				class_alias( $orignal, $alias );
 			}
 		}
 
 		// Register the Membership iDEAL gateway
-		// Membership < 3.5
+		// Membership < 3.5.
 		if ( function_exists( 'M_register_gateway' ) ) {
 			M_register_gateway( 'pronamic_ideal', 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway' );
 		}
 
-		// Membership >= 3.5
+		// Membership >= 3.5.
 		if ( method_exists( 'Membership_Gateway', 'register_gateway' ) ) {
 			Membership_Gateway::register_gateway( 'pronamic_ideal', 'Pronamic\WordPress\Pay\Extensions\Membership\IDealGateway' );
 		}
 
-		// Membership2
-		if ( Extension::is_membership2() ) {
+		// Membership2.
+		if ( self::is_membership2() ) {
 			add_filter( 'ms_model_gateway_register', array( __CLASS__, 'register_gateway' ) );
 		}
 
@@ -121,6 +124,11 @@ class Extension {
 		}
 	}
 
+	/**
+	 * Is Membership 2?
+	 *
+	 * @return bool
+	 */
 	public static function is_membership2() {
 		return class_exists( 'MS_Gateway' ) && ( ! function_exists( 'membership2_use_old' ) || ! membership2_use_old() );
 	}
@@ -128,7 +136,7 @@ class Extension {
 	/**
 	 * Register gateway
 	 *
-	 * @param array $gateways
+	 * @param array $gateways Gateways.
 	 *
 	 * @return array
 	 */
@@ -141,8 +149,8 @@ class Extension {
 	/**
 	 * Payment redirect URL filter.
 	 *
-	 * @param string  $url
-	 * @param Payment $payment
+	 * @param string  $url     Redirect URL.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
@@ -186,7 +194,7 @@ class Extension {
 	/**
 	 * Update lead status of the specified payment
 	 *
-	 * @param Payment $payment
+	 * @param Payment $payment Payment.
 	 */
 	public static function status_update( Payment $payment ) {
 		$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
@@ -213,8 +221,10 @@ class Extension {
 				$gateway = new $gateway_class();
 			}
 
-			// Membership record transaction
-			// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+			/*
+			 * Membership record transaction
+			 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+			 */
 			$gateway->pronamic_record_transaction( $user_id, $sub_id, $amount, $currency, time(), $payment->get_id(), $status, $note );
 		}
 
@@ -239,8 +249,10 @@ class Extension {
 					}
 				}
 
-				// Added for affiliate system link
-				// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L790
+				/*
+				 * Added for affiliate system link
+				 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L790
+				 */
 				do_action( 'membership_payment_processed', $user_id, $sub_id, $amount, $currency, $payment->get_id() );
 
 				// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L901
@@ -253,8 +265,8 @@ class Extension {
 	/**
 	 * Source text.
 	 *
-	 * @param string  $text
-	 * @param Payment $payment
+	 * @param string  $text    Source text.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
@@ -263,11 +275,14 @@ class Extension {
 
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
-			add_query_arg( array(
-				'page'    => 'membershipgateways',
-				'action'  => 'transactions',
-				'gateway' => 'pronamic_ideal',
-			), admin_url( 'admin.php' ) ),
+			add_query_arg(
+				array(
+					'page'    => 'membershipgateways',
+					'action'  => 'transactions',
+					'gateway' => 'pronamic_ideal',
+				),
+				admin_url( 'admin.php' )
+			),
 			/* translators: %s: payment id */
 			sprintf( __( 'Transaction #%s', 'pronamic_ideal' ), $payment->get_id() )
 		);
@@ -278,8 +293,8 @@ class Extension {
 	/**
 	 * Source description.
 	 *
-	 * @param string  $description
-	 * @param Payment $payment
+	 * @param string  $description Source description.
+	 * @param Payment $payment     Payment.
 	 *
 	 * @return string
 	 */
@@ -290,17 +305,20 @@ class Extension {
 	/**
 	 * Source URL.
 	 *
-	 * @param string  $url
-	 * @param Payment $payment
+	 * @param string  $url     Source URL.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
 	public function source_url( $url, Payment $payment ) {
-		$url = add_query_arg( array(
-			'page'    => 'membershipgateways',
-			'action'  => 'transactions',
-			'gateway' => 'pronamic_ideal',
-		), admin_url( 'admin.php' ) );
+		$url = add_query_arg(
+			array(
+				'page'    => 'membershipgateways',
+				'action'  => 'transactions',
+				'gateway' => 'pronamic_ideal',
+			),
+			admin_url( 'admin.php' )
+		);
 
 		return $url;
 	}
@@ -308,7 +326,7 @@ class Extension {
 	/**
 	 * Add the gateway to the activated gateways array if the config option is not empty
 	 *
-	 * @param array $gateways
+	 * @param array $gateways Activated gateways.
 	 *
 	 * @return array
 	 */
