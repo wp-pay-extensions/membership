@@ -12,7 +12,7 @@ use Pronamic\WordPress\Pay\Util as Pay_Util;
 /**
  * Title: WordPress pay WPMU DEV Membership gateway
  * Description:
- * Copyright: Copyright (c) 2005 - 2018
+ * Copyright: 2005-2019 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -94,7 +94,7 @@ class Gateway extends Membership_Gateway {
 			$this->name = __( 'Pronamic', 'pronamic_ideal' );
 		}
 
-		// Set title
+		// Set title.
 		$this->title = $this->name;
 
 		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.freesubscriptions.php#L30
@@ -132,14 +132,20 @@ class Gateway extends Membership_Gateway {
 	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
 	 */
 	public function pronamic_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note ) {
-		// Membership <= 3.4
-		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		/*
+		 * Membership <= 3.4
+		 *
+		 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		 */
 		if ( method_exists( $this, 'record_transaction' ) ) {
 			$this->record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
 
-		// Membership >= 3.5
-		// @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Gateway.php#L256
+		/*
+		 * Membership >= 3.5
+		 *
+		 * @link https://github.com/pronamic-wpmudev/membership-premium/blob/3.5.1.2/classes/Membership/Gateway.php#L256
+		 */
 		if ( method_exists( $this, '_record_transaction' ) ) {
 			$this->_record_transaction( $user_id, $sub_id, $amount, $currency, $timestamp, $paypal_id, $status, $note );
 		}
@@ -155,7 +161,7 @@ class Gateway extends Membership_Gateway {
 			return;
 		}
 
-		// Data
+		// Data.
 		$subscription_id = filter_input( INPUT_POST, 'subscription_id', FILTER_SANITIZE_STRING );
 		$user_id         = filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_STRING );
 
@@ -181,10 +187,10 @@ class Gateway extends Membership_Gateway {
 
 		$data = new PaymentData( $subscription, $membership );
 
-		// Start
+		// Start.
 		$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
 
-		// Meta
+		// Meta.
 		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
 		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', Membership::get_subscription_id( $subscription ) );
 
@@ -198,26 +204,29 @@ class Gateway extends Membership_Gateway {
 			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', $invoice->id );
 		}
 
-		// Membership record transaction
-		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		/*
+		 * Membership record transaction
+		 *
+		 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.gateway.php#L176
+		 */
 		$this->pronamic_record_transaction(
-			$user_id, // User ID
-			Membership::get_subscription_id( $subscription ), // Sub ID
-			$data->get_amount()->get_value(), // Amount
-			$data->get_currency(), // Currency
-			time(), // Timestamp
-			$payment->get_id(), // PayPal ID
-			'', // Status
-			'' // Note
+			$user_id, // User ID.
+			Membership::get_subscription_id( $subscription ), // Sub ID.
+			$data->get_amount()->get_value(), // Amount.
+			$data->get_currency(), // Currency.
+			time(), // Timestamp.
+			$payment->get_id(), // PayPal ID.
+			'', // Status.
+			'' // Note.
 		);
 
-		// Error
+		// Error.
 		$error = $gateway->get_error();
 
 		if ( is_wp_error( $error ) ) {
 			$this->error = $error;
 		} else {
-			// Redirect
+			// Redirect.
 			$gateway->redirect( $payment );
 		}
 	}
@@ -227,11 +236,11 @@ class Gateway extends Membership_Gateway {
 	 *
 	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/includes/payment.form.php#L78
 	 *
-	 * @param M_Subscription $subscription
+	 * @param M_Subscription $subscription Subscription.
 	 *
 	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php
 	 *
-	 * @param array          $pricing
+	 * @param array          $pricing Pricing.
 	 *
 	 * @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/class.subscription.php#L110
 	 *
@@ -244,7 +253,7 @@ class Gateway extends Membership_Gateway {
 	 *         )
 	 *     )
 	 *
-	 * @param int            $user_id WordPress user/member ID
+	 * @param int            $user_id WordPress user/member ID.
 	 */
 	public function purchase_button( $subscription, $pricing, $user_id ) {
 		if ( Membership::is_pricing_free( $pricing ) ) {
@@ -268,10 +277,13 @@ class Gateway extends Membership_Gateway {
 
 		// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/classes/membershipadmin.php#K2908
 		if ( 'new' === strtolower( Membership::get_option( 'formtype' ) ) ) {
-			$action = add_query_arg( array(
-				'action'       => 'buynow',
-				'subscription' => Membership::get_subscription_id( $subscription ),
-			), admin_url( 'admin-ajax.php' ) );
+			$action = add_query_arg(
+				array(
+					'action'       => 'buynow',
+					'subscription' => Membership::get_subscription_id( $subscription ),
+				),
+				admin_url( 'admin-ajax.php' )
+			);
 		} else {
 			$action = '#pronamic-pay-form';
 		}
@@ -289,15 +301,16 @@ class Gateway extends Membership_Gateway {
 
 		echo '<div style="margin-top: 1em;">';
 
-		echo $gateway->get_input_html(); // WPCS: xss ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $gateway->get_input_html();
 
-		// Data
+		// Data.
 		$fields = array(
 			'subscription_id' => Membership::get_subscription_id( $subscription ),
 			'user_id'         => $user_id,
 		);
 
-		// Coupon
+		// Coupon.
 		if ( function_exists( 'membership_get_current_coupon' ) ) {
 			$coupon = membership_get_current_coupon();
 
@@ -306,9 +319,10 @@ class Gateway extends Membership_Gateway {
 			}
 		}
 
-		echo Pay_Util::html_hidden_fields( $fields ); // WPCS: xss ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo Pay_Util::html_hidden_fields( $fields );
 
-		// Submit button
+		// Submit button.
 		printf(
 			'<input type="submit" name="pronamic_pay_membership_%s" value="%s" />',
 			esc_attr( $this->gateway ),
@@ -332,14 +346,14 @@ class Gateway extends Membership_Gateway {
 	 * @return boolean
 	 */
 	public function update() {
-		// Default action is to return true
+		// Default action is to return true.
 		return true;
 	}
 
 	/**
 	 * Update gateway configuration
 	 *
-	 * @param $gateway
+	 * @param Membership_Gateway $gateway Gateway.
 	 */
 	public function update_settings( $gateway ) {
 		$update = array(

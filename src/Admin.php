@@ -5,7 +5,7 @@ namespace Pronamic\WordPress\Pay\Extensions\Membership;
 /**
  * Title: WordPress pay WPMU DEV Membership admin
  * Description:
- * Copyright: Copyright (c) 2005 - 2018
+ * Copyright: 2005-2019 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -33,21 +33,21 @@ class Admin {
 	 * Settings initialize
 	 */
 	public function settings_init() {
-		// Settings - General
+		// Settings - General.
 		add_settings_section(
-			'pronamic_pay_membership_general', // id
-			__( 'General', 'pronamic_ideal' ), // title
-			'__return_false', // callback
-			'pronamic_pay_membership' // page
+			'pronamic_pay_membership_general',
+			__( 'General', 'pronamic_ideal' ),
+			'__return_false',
+			'pronamic_pay_membership'
 		);
 
 		add_settings_field(
-			Extension::OPTION_CONFIG_ID, // id
-			__( 'Configuration', 'pronamic_ideal' ), // title
-			array( 'Pronamic\WordPress\Pay\Admin\AdminModule', 'dropdown_configs' ), // callback
-			'pronamic_pay_membership', // page
-			'pronamic_pay_membership_general', // section
-			array( // args
+			Extension::OPTION_CONFIG_ID,
+			__( 'Configuration', 'pronamic_ideal' ),
+			array( 'Pronamic\WordPress\Pay\Admin\AdminModule', 'dropdown_configs' ),
+			'pronamic_pay_membership',
+			'pronamic_pay_membership_general',
+			array(
 				'name'      => Extension::OPTION_CONFIG_ID,
 				'label_for' => Extension::OPTION_CONFIG_ID,
 			)
