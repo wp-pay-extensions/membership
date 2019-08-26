@@ -27,8 +27,6 @@
 
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
-
-		<exclude name="WordPress.XSS.EscapeOutput" />
 	</rule>
 
 	<rule ref="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error">

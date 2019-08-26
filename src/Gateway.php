@@ -301,7 +301,8 @@ class Gateway extends Membership_Gateway {
 
 		echo '<div style="margin-top: 1em;">';
 
-		echo $gateway->get_input_html(); // WPCS: xss ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $gateway->get_input_html();
 
 		// Data.
 		$fields = array(
@@ -318,7 +319,8 @@ class Gateway extends Membership_Gateway {
 			}
 		}
 
-		echo Pay_Util::html_hidden_fields( $fields ); // WPCS: xss ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo Pay_Util::html_hidden_fields( $fields );
 
 		// Submit button.
 		printf(

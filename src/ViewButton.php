@@ -77,7 +77,8 @@ class ViewButton extends MS_View {
 
 		echo '<div style="margin-top: 1em;">';
 
-		echo $gateway->get_input_html(); // WPCS: xss ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $gateway->get_input_html();
 
 		// Data
 		$fields = array(
@@ -86,7 +87,8 @@ class ViewButton extends MS_View {
 			'invoice_id'      => $invoice->id,
 		);
 
-		echo Util::html_hidden_fields( $fields ); // WPCS: xss ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo Util::html_hidden_fields( $fields );
 
 		// Submit button
 		printf(
@@ -130,7 +132,8 @@ class ViewButton extends MS_View {
 			<td class="ms-buy-now-column" colspan="2">
 				<?php
 
-				echo $payment_form; // WPCS: xss ok.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $payment_form;
 
 				?>
 			</td>
