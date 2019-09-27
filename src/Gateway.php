@@ -80,6 +80,13 @@ class Gateway extends Membership_Gateway {
 	protected $button_description;
 
 	/**
+	 * Error
+	 *
+	 * @var null|\Pronamic\WordPress\Pay\PayException
+	 */
+	protected $error = null;
+
+	/**
 	 * Constructs and initialize an Membership iDEAL gateway
 	 */
 	public function __construct() {
@@ -188,7 +195,11 @@ class Gateway extends Membership_Gateway {
 		$data = new PaymentData( $subscription, $membership );
 
 		// Start.
-		$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
+		try {
+			$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
+		} catch ( \Pronamic\WordPress\Pay\PayException $e ) {
+			$this->error = $e;
+		}
 
 		// Meta.
 		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
@@ -220,13 +231,8 @@ class Gateway extends Membership_Gateway {
 			'' // Note.
 		);
 
-		// Error.
-		$error = $gateway->get_error();
-
-		if ( is_wp_error( $error ) ) {
-			$this->error = $error;
-		} else {
-			// Redirect.
+		// Redirect.
+		if ( ! ( $this->error instanceof \Pronamic\WordPress\Pay\PayException ) ) {
 			$gateway->redirect( $payment );
 		}
 	}
@@ -331,10 +337,8 @@ class Gateway extends Membership_Gateway {
 
 		echo '</div>';
 
-		if ( isset( $this->error ) && is_wp_error( $this->error ) ) {
-			foreach ( $this->error->get_error_messages() as $message ) {
-				echo esc_html( $message ), '<br />';
-			}
+		if ( $this->error instanceof \Pronamic\WordPress\Pay\PayException ) {
+			echo esc_html( $this->error->get_message() ), '<br />';
 		}
 
 		printf( '</form>' );

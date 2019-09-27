@@ -78,9 +78,15 @@ class ViewButton extends MS_View {
 		echo '<div style="margin-top: 1em;">';
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $gateway->get_input_html();
+		$error = null;
 
-		// Data
+		try {
+			echo $gateway->get_input_html();
+		} catch ( \Pronamic\WordPress\Pay\PayException $e ) {
+			$error = $e;
+		}
+
+		// Data.
 		$fields = array(
 			'subscription_id' => Membership::get_subscription_id( $subscription ),
 			'user_id'         => $current_user->ID,
@@ -90,7 +96,7 @@ class ViewButton extends MS_View {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo Util::html_hidden_fields( $fields );
 
-		// Submit button
+		// Submit button.
 		printf(
 			' <input type="submit" name="pronamic_pay_membership_%s" value="%s" />',
 			esc_attr( $ms_gateway->gateway ),
@@ -99,12 +105,8 @@ class ViewButton extends MS_View {
 
 		echo '</div>';
 
-		$error = $gateway->get_error();
-
-		if ( is_wp_error( $error ) ) {
-			foreach ( $error->get_error_messages() as $message ) {
-				echo esc_html( $message ), '<br />';
-			}
+		if ( $error instanceof \Pronamic\WordPress\Pay\PayException ) {
+			echo esc_html( $error->get_message() ), '<br />';
 		}
 
 		?>
