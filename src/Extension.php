@@ -6,7 +6,7 @@ use M_Membership;
 use Membership_Gateway;
 use MS_Factory;
 use MS_Model_Pages;
-use Pronamic\WordPress\Pay\Core\Statuses;
+use Pronamic\WordPress\Pay\Payments\PaymentStatus;
 use Pronamic\WordPress\Pay\Core\Util as Core_Util;
 use Pronamic\WordPress\Pay\Payments\Payment;
 
@@ -165,7 +165,7 @@ class Extension {
 		}
 
 		switch ( $payment->get_status() ) {
-			case Statuses::SUCCESS:
+			case PaymentStatus::SUCCESS:
 				// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-pages.php#L492-L530
 				if ( Core_Util::class_method_exists( 'MS_Model_Pages', 'get_page_url' ) ) {
 					$invoice_id = get_post_meta( $payment->get_id(), '_pronamic_payment_membership_invoice_id', true );
@@ -229,12 +229,12 @@ class Extension {
 		}
 
 		switch ( $payment->get_status() ) {
-			case Statuses::OPEN:
+			case PaymentStatus::OPEN:
 				// @link https://plugins.trac.wordpress.org/browser/membership/tags/3.4.4.1/membershipincludes/gateways/gateway.paypalexpress.php#L871
 				do_action( 'membership_payment_pending', $user_id, $sub_id, $amount, $currency, $payment->get_id() );
 
 				break;
-			case Statuses::SUCCESS:
+			case PaymentStatus::SUCCESS:
 				// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/class-ms-factory.php#L116-L184
 				// @link https://github.com/wp-plugins/membership/blob/4.0.0.2/app/model/class-ms-model-invoice.php
 				if ( isset( $gateway, $invoice ) && ! $invoice->is_paid() ) {
