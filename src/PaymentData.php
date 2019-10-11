@@ -122,7 +122,7 @@ class PaymentData extends Pay_PaymentData {
 		$item->set_price( $pricing_array[0]['amount'] );
 		$item->set_quantity( 1 );
 
-		$items->addItem( $item );
+		$items->add_item( $item );
 
 		return $items;
 	}
