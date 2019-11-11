@@ -82,7 +82,7 @@ class ViewButton extends MS_View {
 
 		try {
 			echo $gateway->get_input_html();
-		} catch ( \Pronamic\WordPress\Pay\PayException $e ) {
+		} catch ( \Exception $e ) {
 			$error = $e;
 		}
 
@@ -105,8 +105,8 @@ class ViewButton extends MS_View {
 
 		echo '</div>';
 
-		if ( $error instanceof \Pronamic\WordPress\Pay\PayException ) {
-			echo esc_html( $error->get_message() ), '<br />';
+		if ( $error instanceof \Exception ) {
+			echo esc_html( $error->getMessage() ), '<br />';
 		}
 
 		?>
