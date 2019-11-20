@@ -77,10 +77,10 @@ class ViewButton extends MS_View {
 
 		echo '<div style="margin-top: 1em;">';
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		$error = null;
 
 		try {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $gateway->get_input_html();
 		} catch ( \Exception $e ) {
 			$error = $e;
