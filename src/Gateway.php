@@ -16,7 +16,7 @@ use Pronamic\WordPress\Pay\Util as Pay_Util;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.1
+ * @version 2.0.4
  * @since   1.0.2
  */
 class Gateway extends Membership_Gateway {
@@ -78,6 +78,13 @@ class Gateway extends Membership_Gateway {
 	 * @var bool $button_description
 	 */
 	protected $button_description;
+
+	/**
+	 * Error
+	 *
+	 * @var null|\Exception
+	 */
+	protected $error = null;
 
 	/**
 	 * Constructs and initialize an Membership iDEAL gateway
@@ -188,11 +195,15 @@ class Gateway extends Membership_Gateway {
 		$data = new PaymentData( $subscription, $membership );
 
 		// Start.
-		$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
+		try {
+			$payment = Plugin::start( $config_id, $gateway, $data, $this->payment_method );
 
-		// Meta.
-		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
-		update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', Membership::get_subscription_id( $subscription ) );
+			// Meta.
+			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_user_id', $user_id );
+			update_post_meta( $payment->get_id(), '_pronamic_payment_membership_subscription_id', Membership::get_subscription_id( $subscription ) );
+		} catch ( \Exception $e ) {
+			$this->error = $e;
+		}
 
 		if ( Extension::is_membership2() ) {
 			$invoice = $subscription->get_current_invoice();
@@ -220,13 +231,8 @@ class Gateway extends Membership_Gateway {
 			'' // Note.
 		);
 
-		// Error.
-		$error = $gateway->get_error();
-
-		if ( is_wp_error( $error ) ) {
-			$this->error = $error;
-		} else {
-			// Redirect.
+		// Redirect.
+		if ( ! ( $this->error instanceof \Exception ) ) {
 			$gateway->redirect( $payment );
 		}
 	}
@@ -331,10 +337,8 @@ class Gateway extends Membership_Gateway {
 
 		echo '</div>';
 
-		if ( isset( $this->error ) && is_wp_error( $this->error ) ) {
-			foreach ( $this->error->get_error_messages() as $message ) {
-				echo esc_html( $message ), '<br />';
-			}
+		if ( $this->error instanceof \Exception ) {
+			echo esc_html( $this->error->getMessage() ), '<br />';
 		}
 
 		printf( '</form>' );
