@@ -13,7 +13,7 @@ use Pronamic\WordPress\Pay\Util;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.1
+ * @version 2.0.4
  * @since   1.0.0
  */
 class ViewButton extends MS_View {
