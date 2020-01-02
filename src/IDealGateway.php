@@ -7,7 +7,7 @@ use Pronamic\WordPress\Pay\Core\PaymentMethods;
 /**
  * Title: WordPress pay WPMU DEV Membership iDEAL gateway
  * Description:
- * Copyright: 2005-2019 Pronamic
+ * Copyright: 2005-2020 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma

@@ -13,7 +13,7 @@ use Pronamic\WordPress\Pay\Payments\Payment;
 /**
  * Title: WordPress pay WPMU DEV Membership extension
  * Description:
- * Copyright: 2005-2019 Pronamic
+ * Copyright: 2005-2020 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
