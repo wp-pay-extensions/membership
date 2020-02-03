@@ -1,4 +1,4 @@
-# WordPress Pay Extension: Membership
+# [DEPRECATED] WordPress Pay Extension: Membership
 
 **Membership driver for the WordPress payment processing library.**
 

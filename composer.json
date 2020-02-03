@@ -1,7 +1,7 @@
 {
 	"name": "wp-pay-extensions/membership",
-	"description": "Membership driver for the WordPress payment processing library.",
-	"keywords": ["wordpress", "wp", "pay", "membership", "extension", "pronamic"],
+	"description": "✗ [DEPRECATED] Membership driver for the WordPress payment processing library.",
+	"keywords": ["wordpress", "wp", "pay", "membership", "extension", "pronamic", "deprecated"],
 	"homepage": "http://www.wp-pay.org/extensions/membership/",
 	"license": "GPL-3.0-or-later",
 	"authors": [
